@@ -7,20 +7,21 @@ use Yii;
 /**
  * This is the model class for table "artigos".
  *
- * @property int $id
- * @property string $referencia
+ * @property int $Id
+ * @property string $nome
  * @property string $descricao
  * @property float $preco
  * @property int $stock
  * @property int $categoria_id
- * @property int $ivas_id
- * @property string|null $imagem
+ * @property int $iva_id
+ * @property int|null $destaque
+ * @property string $imagem
  *
  * @property Categoria $categoria
- * @property Ivas $ivas
+ * @property Iva $iva
+ * @property Linhacarrinho[] $linhacarrinhos
+ * @property Linhacompras[] $linhacompras
  * @property Linhafatura[] $linhafaturas
- * @property Linhascarrinhocompras[] $linhascarrinhocompras
- * @property Linhasfaturasfornecedores[] $linhasfaturasfornecedores
  */
 class Artigos extends \yii\db\ActiveRecord
 {
@@ -38,12 +39,12 @@ class Artigos extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['referencia', 'descricao', 'preco', 'stock', 'categoria_id', 'ivas_id'], 'required'],
+            [['nome', 'descricao', 'preco', 'stock', 'categoria_id', 'iva_id',], 'required'],
             [['preco'], 'number'],
-            [['stock', 'categoria_id', 'ivas_id'], 'integer'],
-            [['referencia', 'descricao', 'imagem'], 'string', 'max' => 45],
+            [['stock', 'categoria_id', 'iva_id', 'destaque'], 'integer'],
+            [['nome', 'descricao', 'imagem'], 'string', 'max' => 45],
             [['categoria_id'], 'exist', 'skipOnError' => true, 'targetClass' => Categoria::class, 'targetAttribute' => ['categoria_id' => 'id']],
-            [['ivas_id'], 'exist', 'skipOnError' => true, 'targetClass' => Ivas::class, 'targetAttribute' => ['ivas_id' => 'id']],
+            [['iva_id'], 'exist', 'skipOnError' => true, 'targetClass' => Iva::class, 'targetAttribute' => ['iva_id' => 'id']],
         ];
     }
 
@@ -53,13 +54,14 @@ class Artigos extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'referencia' => 'Referencia',
+            'Id' => 'ID',
+            'nome' => 'Nome',
             'descricao' => 'Descricao',
             'preco' => 'Preco',
             'stock' => 'Stock',
             'categoria_id' => 'Categoria ID',
-            'ivas_id' => 'Ivas ID',
+            'iva_id' => 'Iva ID',
+            'destaque' => 'Destaque',
             'imagem' => 'Imagem',
         ];
     }
@@ -75,13 +77,33 @@ class Artigos extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Ivas]].
+     * Gets query for [[Iva]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getIvas()
+    public function getIva()
     {
-        return $this->hasOne(Ivas::class, ['id' => 'ivas_id']);
+        return $this->hasOne(Iva::class, ['id' => 'iva_id']);
+    }
+
+    /**
+     * Gets query for [[Linhacarrinhos]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLinhacarrinhos()
+    {
+        return $this->hasMany(Linhacarrinho::class, ['artigo_id' => 'Id']);
+    }
+
+    /**
+     * Gets query for [[Linhacompras]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLinhacompras()
+    {
+        return $this->hasMany(Linhacompras::class, ['artigo_id' => 'Id']);
     }
 
     /**
@@ -91,26 +113,6 @@ class Artigos extends \yii\db\ActiveRecord
      */
     public function getLinhafaturas()
     {
-        return $this->hasMany(Linhafatura::class, ['artigos_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Linhascarrinhocompras]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getLinhascarrinhocompras()
-    {
-        return $this->hasMany(Linhascarrinhocompras::class, ['artigos_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Linhasfaturasfornecedores]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getLinhasfaturasfornecedores()
-    {
-        return $this->hasMany(Linhasfaturasfornecedores::class, ['artigos_id' => 'id']);
+        return $this->hasMany(Linhafatura::class, ['artigo_id' => 'Id']);
     }
 }
