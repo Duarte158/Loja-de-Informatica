@@ -8,14 +8,16 @@ use Yii;
  * This is the model class for table "artigos".
  *
  * @property int $Id
- * @property string $nome
- * @property string $descricao
- * @property float $preco
- * @property int $stock
- * @property int $categoria_id
- * @property int $iva_id
+ * @property string|null $nome
+ * @property string|null $descricao
+ * @property float|null $precoUni
+ * @property int|null $stock
+ * @property int|null $categoria_id
+ * @property int|null $iva_id
  * @property int|null $destaque
- * @property string $imagem
+ * @property int|null $referencia
+ * @property string|null $imagem
+ * @property float|null $precoFinal
  *
  * @property Categoria $categoria
  * @property Iva $iva
@@ -39,9 +41,8 @@ class Artigos extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nome', 'descricao', 'preco', 'stock', 'categoria_id', 'iva_id',], 'required'],
-            [['preco'], 'number'],
-            [['stock', 'categoria_id', 'iva_id', 'destaque'], 'integer'],
+            [['precoUni', 'precoFinal'], 'number'],
+            [['stock', 'categoria_id', 'iva_id', 'destaque', 'referencia'], 'integer'],
             [['nome', 'descricao', 'imagem'], 'string', 'max' => 45],
             [['categoria_id'], 'exist', 'skipOnError' => true, 'targetClass' => Categoria::class, 'targetAttribute' => ['categoria_id' => 'id']],
             [['iva_id'], 'exist', 'skipOnError' => true, 'targetClass' => Iva::class, 'targetAttribute' => ['iva_id' => 'id']],
@@ -57,12 +58,14 @@ class Artigos extends \yii\db\ActiveRecord
             'Id' => 'ID',
             'nome' => 'Nome',
             'descricao' => 'Descricao',
-            'preco' => 'Preco',
+            'precoUni' => 'Preco Uni',
             'stock' => 'Stock',
             'categoria_id' => 'Categoria ID',
             'iva_id' => 'Iva ID',
             'destaque' => 'Destaque',
+            'referencia' => 'Referencia',
             'imagem' => 'Imagem',
+            'precoFinal' => 'Preco Final',
         ];
     }
 
@@ -101,18 +104,18 @@ class Artigos extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getLinhacompras()
+  /*  public function getLinhacompras()
     {
-        return $this->hasMany(Linhacompras::class, ['artigo_id' => 'Id']);
-    }
+        return $this->hasMany(LinhaCarrinho::class, ['artigo_id' => 'Id']);
+    }*/
 
     /**
      * Gets query for [[Linhafaturas]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getLinhafaturas()
+ /*   public function getLinhafaturas()
     {
-        return $this->hasMany(Linhafatura::class, ['artigo_id' => 'Id']);
-    }
+        return $this->hasMany(LinhaCarrinho::class, ['artigo_id' => 'Id']);
+    }*/
 }

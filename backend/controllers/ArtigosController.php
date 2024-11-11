@@ -7,6 +7,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * ArtigosController implements the CRUD actions for Artigos model.
@@ -80,8 +81,24 @@ class ArtigosController extends Controller
         $model = new Artigos();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'Id' => $model->Id]);
+            if ($model->load($this->request->post()) && $model->validate()) {
+
+                // Calcular o precoFinal
+                $ivaPercentage = $model->iva->percentagem; // Certifique-se de que o valor do iva_id seja o percentual
+                $model->precoFinal = round($model->precoUni * (1 + $ivaPercentage / 100), 2); // Arredondar para 2 casas decimais
+                $model->stock = 0;
+                // Carregar e salvar a imagem
+                $imagem = UploadedFile::getInstance($model, 'imagem');
+                if ($imagem) {
+                    $imagePath = 'C:\wamp64\www\Loja-de-Informatica-main\frontend\web\imagens\materiais\\' . $imagem->nome;
+                    $imagem->saveAs($imagePath);
+                    $model->imagem = $imagem->nome;
+                }
+
+                // Salvar o modelo com precoFinal e imagem
+                if ($model->save(false)) {
+                    return $this->redirect(['view', 'Id' => $model->Id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
