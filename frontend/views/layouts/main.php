@@ -55,7 +55,7 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
     <header>
         <!-- Jumbotron -->
         <div class="p-3 text-center bg-white border-bottom">
-            <div class="container-fluid">
+            <div class="container">
                 <div class="row">
                     <!-- Left elements -->
                     <div class="col-md-4 d-flex justify-content-center justify-content-md-start mb-3 mb-md-0"><a
@@ -66,7 +66,7 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
 
                     <!-- Center elements -->
                     <div class="col-md-4">
-                        <form action="<?= Url::to(['artigos/pesquisar']) ?>" method="get" class="d-flex input-group w-auto my-auto mb-3 mb-md-0">
+                        <form action="<?= Yii::$app->urlManager->createUrl(['artigos/pesquisar']) ?>" method="get" class="d-flex input-group w-auto my-auto mb-3 mb-md-0">
                             <input autocomplete="off" name="query" value="" type="search" class="form-control rounded" placeholder="Comece já a pesquisa" />
                             <button type="submit" class="input-group-text border-0 d-none d-lg-flex">
                                 <i class="fas fa-search"></i>
