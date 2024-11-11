@@ -2,6 +2,7 @@
 
 namespace frontend\models;
 
+use common\models\Profile;
 use Yii;
 use yii\base\Model;
 use common\models\User;
@@ -15,6 +16,15 @@ class SignupForm extends Model
     public $email;
     public $password;
 
+
+
+
+    public $name;
+    public $address;
+    public $contact;
+    public $nif;
+    public $cidade;
+    public $codpostal;
 
     /**
      * {@inheritdoc}
@@ -45,18 +55,33 @@ class SignupForm extends Model
      */
     public function signup()
     {
-        if (!$this->validate()) {
-            return null;
-        }
-        
-        $user = new User();
-        $user->username = $this->username;
-        $user->email = $this->email;
-        $user->setPassword($this->password);
-        $user->generateAuthKey();
-        $user->generateEmailVerificationToken();
+        if ($this->validate()) {
+            $user = new User();
 
-        return $user->save() && $this->sendEmail($user);
+            $user->username = $this->username;
+            $user->email = $this->email;
+            $user->setPassword($this->password);
+            $user->generateAuthKey();
+            $user->save(false);
+
+            $profile = new Profile();
+            $profile->user_id = $user->id;
+            $profile->name= $this->name;
+            $profile->nif = $this->nif;
+            $profile->address = $this->address;
+            $profile->contact = $this->contact;
+            $profile->cidade = $this->cidade;
+            $profile->codpostal = $this->codpostal;
+            $profile->save(false);
+
+
+            return $user;
+
+
+
+        }
+
+        return null;
     }
 
     /**

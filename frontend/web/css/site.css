@@ -1,3 +1,36 @@
+.icon-hover:hover {
+    border-color: #3b71ca !important;
+    background-color: white !important;
+}
+
+.icon-hover:hover i {
+    color: #3b71ca !important;
+}
+/* path/to/your/css/file.css */
+
+
+/*nav css*/
+.nav-item {
+    padding: 0.5rem 0xp;
+}
+
+.dropdown-hover:hover>.dropdown-menu {
+    display: inline-block;
+}
+
+.dropdown-hover>.dropdown-toggle:active {
+    /*Without this, clicking will make it sticky*/
+    pointer-events: none;
+}
+
+/*nav css*/
+.btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+
+
+
 main > .container, main > .container-fluid
 {
     padding: 70px 15px 20px;
@@ -8,6 +41,7 @@ main > .container, main > .container-fluid
     font-size: .9em;
     height: 60px;
 }
+
 
 .footer > .container, .footer > .container-fluid {
     padding-right: 15px;
@@ -32,12 +66,12 @@ a.asc:after, a.desc:after {
 }
 
 a.asc:after {
-    border-bottom: solid 7px #212529;
+    border-bottom: solid 7px #ff0000;
     border-top-width: 0;
 }
 
 a.desc:after {
-    border-top: solid 7px #212529;
+    border-top: solid 7px #FF0000FF;
     border-bottom-width: 0;
 }
 
@@ -100,4 +134,24 @@ a.desc:after {
 .breadcrumb-item > a
 {
     text-decoration: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+h3{
+    text-align: center;
+
+
+}
+
+.cart {
+    position: relative;
+}
+
+.card-background {
+    background-color: darkorange !important;
+    color: white !important; /* Certifique-se de que o texto permanece legível */
 }
