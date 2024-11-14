@@ -41,6 +41,7 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
 
         <style>
             .navbar-nav .nav-link {
@@ -95,18 +96,47 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
                             <!-- Languages -->
 
 
-                            <!-- User -->
                             <div class="dropdown">
-                                <a data-mdb-dropdown-init class="text-reset dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
-                                   id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
-                                    <img src="https://mdbootstrap.com/img/Photos/Avatars/img (31).jpg" class="rounded-circle" height="22"
-                                         alt="" loading="lazy" />
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                                    <li><a class="dropdown-item" href="#">My profile</a></li>
-                                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                                    <li><a class="dropdown-item" href="#">Logout</a></li>
-                                </ul>
+                                <?php if (Yii::$app->user->isGuest): ?>
+                                    <a
+                                            class="text-reset d-flex align-items-center hidden-arrow"
+                                            href="#"
+                                            id="navbarDropdownMenuLink"
+                                            role="button"
+                                            onclick="toggleDropdown()">
+                                        <i class="bi bi-person" style="font-size: 1.5rem;"></i>
+                                    </a>
+
+                                    <!-- Dropdown para convidados -->
+                                    <ul class="dropdown-menu dropdown-menu-end" id="userDropdown" style="display: none;">
+                                        <li><a class="dropdown-item" href="<?= Url::to(['site/login']) ?>">Login</a></li>
+                                        <li><a class="dropdown-item" href="<?= Url::to(['site/register']) ?>">Register</a></li>
+                                    </ul>
+                                <?php else: ?>
+                                    <a
+                                            class="text-reset d-flex align-items-center hidden-arrow"
+                                            href="#"
+                                            id="navbarDropdownMenuLink"
+                                            role="button"
+                                            onclick="toggleDropdown()">
+                                        <i class="bi bi-person" style="font-size: 1.5rem;"></i>
+                                    </a>
+
+                                    <!-- Dropdown para usuários logados -->
+                                    <ul class="dropdown-menu dropdown-menu-end" id="userDropdown" style="display: none;">
+                                        <li><a class="dropdown-item" href="<?= Url::to(['user/index']) ?>">Perfil</a></li>
+                                        <li><a class="dropdown-item" href="/settings">Configurações</a></li>
+                                        <li>
+                                            <?= Html::beginForm(['/site/logout'], 'post')
+                                            . Html::submitButton(
+                                                'Logout (' . Yii::$app->user->identity->username . ')',
+                                                ['class' => 'dropdown-item text-decoration-none']
+                                            )
+                                            . Html::endForm();
+                                            ?>
+                                        </li>
+                                    </ul>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -362,3 +392,20 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
     </body>
     </html>
 <?php $this->endPage() ?>
+
+<script>
+    function toggleDropdown() {
+        const dropdownMenu = document.getElementById("userDropdown");
+        dropdownMenu.style.display = dropdownMenu.style.display === "none" ? "block" : "none";
+    }
+
+    // Fecha o dropdown ao clicar fora dele
+    document.addEventListener('click', function(event) {
+        const dropdownMenu = document.getElementById("userDropdown");
+        const avatar = document.getElementById("navbarDropdownMenuLink");
+
+        if (!avatar.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.style.display = "none";
+        }
+    });
+</script>
