@@ -110,7 +110,7 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
                                     <!-- Dropdown para convidados -->
                                     <ul class="dropdown-menu dropdown-menu-end" id="userDropdown" style="display: none;">
                                         <li><a class="dropdown-item" href="<?= Url::to(['site/login']) ?>">Login</a></li>
-                                        <li><a class="dropdown-item" href="<?= Url::to(['site/register']) ?>">Register</a></li>
+                                        <li><a class="dropdown-item" href="<?= Url::to(['site/signup']) ?>">Register</a></li>
                                     </ul>
                                 <?php else: ?>
                                     <a

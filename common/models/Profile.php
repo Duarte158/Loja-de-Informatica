@@ -1,19 +1,20 @@
 <?php
 
 namespace common\models;
+
 use Yii;
 
 /**
  * This is the model class for table "profile".
  *
- * @property int $idprofile
- * @property string|null $name
- * @property int|null $nif
- * @property string|null $address
- * @property int|null $contact
+ * @property int $id
+ * @property string $nome
+ * @property string $morada
+ * @property int $contacto
+ * @property int $nif
  * @property int $user_id
- * @property string|null $codpostal
- * @property string|null $cidade
+ * @property string $cidade
+ * @property string $codPostal
  *
  * @property User $user
  */
@@ -33,9 +34,11 @@ class Profile extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nif', 'contact', 'user_id'], 'integer'],
-            [['user_id'], 'required'],
-            [['name', 'address', 'codpostal', 'cidade'], 'string', 'max' => 45],
+            [['nome', 'morada', 'contacto', 'nif', 'user_id', 'cidade', 'codPostal'], 'required'],
+            [['contacto', 'nif', 'user_id'], 'integer'],
+            [['nome', 'morada', 'cidade', 'codPostal'], 'string', 'max' => 45],
+            [['nif'], 'unique'],
+            [['contacto'], 'unique'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -46,14 +49,14 @@ class Profile extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'idprofile' => 'Idprofile',
-            'name' => 'Name',
+            'id' => 'ID',
+            'nome' => 'Nome',
+            'morada' => 'Morada',
+            'contacto' => 'Contacto',
             'nif' => 'Nif',
-            'address' => 'Address',
-            'contact' => 'Contact',
             'user_id' => 'User ID',
-            'codpostal' => 'Codpostal',
             'cidade' => 'Cidade',
+            'codPostal' => 'Cod Postal',
         ];
     }
 

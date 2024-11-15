@@ -19,12 +19,12 @@ class SignupForm extends Model
 
 
 
-    public $name;
-    public $address;
-    public $contact;
+    public $nome;
+    public $morada;
+    public $contacto;
     public $nif;
     public $cidade;
-    public $codpostal;
+    public $codPostal;
 
     /**
      * {@inheritdoc}
@@ -66,12 +66,12 @@ class SignupForm extends Model
 
             $profile = new Profile();
             $profile->user_id = $user->id;
-            $profile->name= $this->name;
+            $profile->nome= $this->nome;
             $profile->nif = $this->nif;
-            $profile->address = $this->address;
-            $profile->contact = $this->contact;
+            $profile->morada = $this->morada;
+            $profile->contacto = $this->contacto;
             $profile->cidade = $this->cidade;
-            $profile->codpostal = $this->codpostal;
+            $profile->codPostal = $this->codPostal;
             $profile->save(false);
 
 
@@ -83,7 +83,6 @@ class SignupForm extends Model
 
         return null;
     }
-
     /**
      * Sends confirmation email to user
      * @param User $user user model to with email should be send
