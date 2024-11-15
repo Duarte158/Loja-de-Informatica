@@ -17,8 +17,6 @@ class SignupForm extends Model
     public $password;
 
 
-
-
     public $name;
     public $address;
     public $contact;
@@ -66,7 +64,7 @@ class SignupForm extends Model
 
             $profile = new Profile();
             $profile->user_id = $user->id;
-            $profile->name= $this->name;
+            $profile->name = $this->name;
             $profile->nif = $this->nif;
             $profile->address = $this->address;
             $profile->contact = $this->contact;
@@ -76,7 +74,6 @@ class SignupForm extends Model
 
 
             return $user;
-
 
 
         }

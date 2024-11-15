@@ -23,6 +23,26 @@ class ArtigosController extends \yii\web\Controller
         ]);
     }
 
+    public function actionPesquisar()
+    {
+        $query = Yii::$app->request->get('query');
+
+
+        $artigos = Artigos::find()
+            ->where(['like', 'nome', $query])
+            ->all();
+
+        // Renderiza a view de resultados, passando os artigos encontrados
+        return $this->render('search', [
+            'artigos' => $artigos,
+            'query' => $query,
+
+
+        ]);
+
+    }
+
+
     public function actionAdicionarCarrinho()
     {
         $request = Yii::$app->request;
