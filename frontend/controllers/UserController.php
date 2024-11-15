@@ -2,6 +2,8 @@
 
 namespace frontend\controllers;
 
+use backend\models\Carrinhocompras;
+use backend\models\Linhacarrinho;
 use common\models\User;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -49,18 +51,56 @@ class UserController extends Controller
         ]);
     }
 
+
+    public function actionCompras()
+    {
+        $userId = \Yii::$app->user->identity->id;
+        $model = User::findOne($userId);
+
+        // Setting up the ActiveDataProvider to fetch the completed carts
+        $dataProvider = new \yii\data\ActiveDataProvider([
+            'query' => \common\models\Carrinhocompras::find()
+                ->where([
+                    'user_id' => $userId,
+                    'estado' => 'finalizado'
+                ]),
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
+
+        return $this->render('compras', [
+            'model' => $model,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+
+    public function actionView($id)
+    {
+        $cart = \common\models\Carrinhocompras::findOne($id);
+
+        $linhasCarrinho = \common\models\LinhaCarrinho::find()
+            ->where(['carrinho_id' => $cart->id])
+            ->all();
+
+        if (!$cart) {
+            throw new NotFoundHttpException('The requested cart does not exist.');
+        }
+
+        return $this->render('viewInvoice', [
+            'model' => $cart,
+            'linhasCarrinho' => $linhasCarrinho,
+        ]);
+    }
+
     /**
      * Displays a single User model.
      * @param int $id
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
+
 
     /**
      * Creates a new User model.

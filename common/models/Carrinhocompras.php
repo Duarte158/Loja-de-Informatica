@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use backend\models\Linhacarrinho;
 use Yii;
 
 /**
@@ -79,7 +80,7 @@ class Carrinhocompras extends \yii\db\ActiveRecord
      */
     public function getLinhacarrinhos()
     {
-        return $this->hasMany(Linhacarrinho::class, ['carrinho_id' => 'id']);
+        return $this->hasMany(\common\models\Linhacarrinho::class, ['carrinho_id' => 'id']);
     }
 
     /**
@@ -91,4 +92,44 @@ class Carrinhocompras extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+
+    public function getTotalValue()
+    {
+        $total = 0;
+        foreach ($this->linhacarrinhos as $linha) {
+            $total += $linha->getTotalLine();
+        }
+        return $total;
+    }
+
+    /*
+        public function getTotalValue()
+        {
+            $total = 0;
+            foreach ($this->linhacarrinhos as $linha) {
+                $total += $linha->getTotalValueWithIva();
+            }
+            return $total;
+        }
+    */
+
+    public function getTotalIva()
+    {
+        $totalIva = 0;
+        foreach ($this->linhacarrinhos as $linha) {
+            $totalIva += $linha->getIvaValue();
+        }
+        return $totalIva;
+    }
+
+    public function getItemCount()
+    {
+        return \common\models\Linhacarrinho::find()
+            ->where(['carrinho_id' => $this->id])
+            ->sum('quantidade');
+    }
+
+
+
+
 }

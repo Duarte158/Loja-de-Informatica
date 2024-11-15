@@ -26,6 +26,8 @@ class SignupForm extends Model
     public $cidade;
     public $codPostal;
 
+    public $id;
+
     /**
      * {@inheritdoc}
      */
@@ -45,6 +47,14 @@ class SignupForm extends Model
 
             ['password', 'required'],
             ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
+
+
+            ['nif', 'required'],
+            ['nome', 'required'],
+            ['morada', 'required'],
+            ['contacto', 'required'],
+            ['cidade', 'required'],
+            ['codPostal', 'required'],
         ];
     }
 

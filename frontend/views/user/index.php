@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <strong>Nome:</strong>
                                     </div>
                                     <div class="col-sm-8">
-                                        <?= $model->profile !== null ? Html::encode($model->profile->name) : 'N/A' ?>
+                                        <?= $model->profile !== null ? Html::encode($model->profile->nome) : 'N/A' ?>
                                     </div>
                                 </div>
                                 <hr>
@@ -66,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <strong>Morada:</strong>
                                     </div>
                                     <div class="col-sm-8">
-                                        <?= $model->profile !== null ? Html::encode($model->profile->address) : 'N/A' ?>
+                                        <?= $model->profile !== null ? Html::encode($model->profile->morada) : 'N/A' ?>
                                     </div>
                                 </div>
                                 <hr>
@@ -85,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <strong>Codigo Postal:</strong>
                                     </div>
                                     <div class="col-sm-8">
-                                        <?= $model->profile !== null ? Html::encode($model->profile->codpostal) : 'N/A' ?>
+                                        <?= $model->profile !== null ? Html::encode($model->profile->codPostal) : 'N/A' ?>
                                     </div>
                                 </div>
                                 <hr>
@@ -94,7 +94,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <strong>Contacto:</strong>
                                     </div>
                                     <div class="col-sm-8">
-                                        <?= $model->profile !== null ? Html::encode($model->profile->contact) : 'N/A' ?>
+                                        <?= $model->profile !== null ? Html::encode($model->profile->contacto) : 'N/A' ?>
                                     </div>
                                 </div>
                                 <hr>

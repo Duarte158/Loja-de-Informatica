@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $artigos \common\models\Artigos[] */
@@ -37,16 +38,31 @@ $this->title = 'Resultados da Pesquisa: ' . Html::encode($query);
 
                         <div class="col-lg-8 col-xl5 col-sm-4"> <!-- Ajustei os tamanhos das colunas -->                            <div class="filter-container p-0 row">
                                 <?php foreach ($artigos as $artigo): ?>
+
                                     <?php
-                                    $imagemSrc = 'http://localhost/jcfTaicar/frontend/web/images/materiais/' . $artigo->imagem;
+                                    $imagemSrc = 'http://localhost/frontend-loja/frontend/web/imagens/materiais/' . $artigo->imagem;
                                     ?>
+
                                     <div class="col-md-4 mb-4 filtr-item" data-categoria_id="<?= $artigo->categoria_id ?>">
-                                        <a href="<?= Yii::$app->urlManager->createUrl(['artigo/artigos-view', 'Id' => $artigo->Id]) ?>" style="text-decoration: none; color: inherit;">
+                                        <a href="<?= Yii::$app->urlManager->createUrl(['artigos/artigoView', 'id' => $artigo->Id]) ?>" style="text-decoration: none; color: inherit;">
                                             <div class="card h-100 d-flex flex-column justify-content-between">
                                                 <img src="<?= $imagemSrc ?>" class="card-img-top" alt="<?= $artigo->nome ?>" />
                                                 <div class="card-body d-flex flex-column justify-content-center align-items-center">
                                                     <h5 class="card-title text-center"><?= $artigo->nome ?></h5>
                                                     <span class="card-text text-center">Preço: <?= Html::encode(number_format($artigo->precoFinal, 2)) ?> €</span>
+                                                    <div class="mt-3">
+                                                        <?php $form = ActiveForm::begin([
+                                                            'action' => ['artigos/adicionar-carrinho'], // Ação no controller CarrinhoController
+                                                            'method' => 'post',
+                                                        ]); ?>
+
+                                                        <?= Html::hiddenInput('id', $artigo->Id); ?> <!-- ID do artigo -->
+                                                        <?= Html::input('number', 'quantidade', 1, ['min' => 1, 'class' => 'form-control', 'style' => 'width:80px;', 'placeholder' => 'Qtd']); ?> <!-- Quantidade -->
+
+                                                        <?= Html::submitButton('Adicionar ao Carrinho', ['class' => 'btn btn-success']); ?>
+
+                                                        <?php ActiveForm::end(); ?>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </a>

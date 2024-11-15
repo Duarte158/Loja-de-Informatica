@@ -8,13 +8,13 @@ use Yii;
  * This is the model class for table "profile".
  *
  * @property int $id
- * @property string $nome
- * @property string $morada
- * @property int $contacto
- * @property int $nif
+ * @property string|null $nome
+ * @property string|null $morada
+ * @property int|null $contacto
+ * @property int|null $nif
  * @property int $user_id
- * @property string $cidade
- * @property string $codPostal
+ * @property string|null $cidade
+ * @property string|null $codPostal
  *
  * @property User $user
  */
@@ -34,8 +34,8 @@ class Profile extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nome', 'morada', 'contacto', 'nif', 'user_id', 'cidade', 'codPostal'], 'required'],
             [['contacto', 'nif', 'user_id'], 'integer'],
+            [['user_id'], 'required'],
             [['nome', 'morada', 'cidade', 'codPostal'], 'string', 'max' => 45],
             [['nif'], 'unique'],
             [['contacto'], 'unique'],

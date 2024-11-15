@@ -48,59 +48,61 @@ class ArtigosController extends \yii\web\Controller
         $request = Yii::$app->request;
         if ($request->isPost) {
             $id = $request->post('id');
-            $quantidade = (int)$request->post('quantidade');
-            Yii::info("ID recebido: $id, Quantidade recebida: $quantidade"); // Adiciona log para depuração
+            $quantidade = $request->post('quantidade');
 
-            if ($quantidade <= 0) {
-                Yii::$app->session->setFlash('error', 'Quantidade inválida.');
-                return $this->redirect(['artigo/index']);
-            }
+            $produto = Artigos::findOne($id);
 
-            $artigo = Artigos::findOne($id);
-            if ($artigo === null) {
-                Yii::$app->session->setFlash('error', 'Artigo não encontrado.');
-                return $this->redirect(['artigo/index']);
-            }
-
+            // Verifica se o usuário está logado
             if (!Yii::$app->user->isGuest) {
                 $carrinho = Carrinhocompras::find()
-                    ->where(['user_id' => Yii::$app->user->id, 'estado' => 'ativo'])
+                    ->where([
+                        'user_id' => Yii::$app->user->id,
+                        'estado' => 'ativo'
+                    ])
                     ->andWhere(['not', ['estado' => 'finalizado']])
                     ->one();
 
-                if ($carrinho === null) {
+                // Cria o carrinho caso não exista
+                if ($carrinho == null) {
                     $carrinho = new Carrinhocompras();
                     $carrinho->user_id = Yii::$app->user->id;
-                    $carrinho->data = date('Y-m-d-H-i-s');
+                    $carrinho->data = date('Y-m-d H:i:s');
                     $carrinho->estado = 'ativo';
                     $carrinho->save();
                 }
 
+                // Verifica se o produto já está no carrinho
                 $linhaCarrinho = LinhaCarrinho::find()
-                    ->where(['carrinho_id' => $carrinho->id, 'artigo_id' => $artigo->Id])
+                    ->where([
+                        'carrinho_id' => $carrinho->id,
+                        'artigo_id' => $produto->Id
+                    ])
                     ->one();
 
                 if ($linhaCarrinho) {
+                    // Se o produto já existe no carrinho, incrementa a quantidade e atualiza o valor total
                     $linhaCarrinho->quantidade += $quantidade;
                     $linhaCarrinho->valorTotal = round($linhaCarrinho->valor * $linhaCarrinho->quantidade, 2);
                 } else {
-                    $linhaCarrinho = new LinhaCarrinho();
+                    // Caso contrário, cria uma nova linha no carrinho para o produto
+                    $linhaCarrinho = new Linhacarrinho();
                     $linhaCarrinho->carrinho_id = $carrinho->id;
-                    $linhaCarrinho->artigo_id = $artigo->Id;
+                    $linhaCarrinho->artigo_id = $produto->Id;
                     $linhaCarrinho->quantidade = $quantidade;
-                    $linhaCarrinho->valor = round($artigo->precoFinal * $quantidade, 2);
+                    $linhaCarrinho->valor = round($produto->precoFinal, 2);
+                    $linhaCarrinho->valorTotal = round($produto->precoFinal * $quantidade, 2);
                 }
 
+                // Salva a linha do carrinho e atualiza os valores totais do carrinho
                 if ($linhaCarrinho->save()) {
                     $carrinho->valorIva = $carrinho->getTotalIva();
                     $carrinho->valorTotal = $carrinho->getTotalValue();
                     $carrinho->save();
 
-                    Yii::$app->session->setFlash('success', 'Artigo adicionado ao carrinho com sucesso.');
-                    return $this->redirect(['carrinho-compras/index']);
+                    Yii::$app->session->setFlash('success', 'Produto adicionado ao carrinho com sucesso.');
+                    return $this->redirect(['carrinho-compras/index']);  // Altere o redirecionamento para onde desejar
                 } else {
                     Yii::error('Erro ao salvar linha do carrinho: ' . json_encode($linhaCarrinho->errors));
-                    Yii::$app->session->setFlash('error', 'Erro ao adicionar artigo ao carrinho.');
                     return $this->redirect(['site/index']);
                 }
             } else {
