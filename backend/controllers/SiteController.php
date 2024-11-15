@@ -22,22 +22,20 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
+                'only' => ['index', 'view', 'create', 'update', 'delete'], // Define as ações a restringir
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
                         'allow' => true,
+                        'roles' => ['@'], // Apenas utilizadores autenticados
                     ],
                     [
-                        'actions' => ['logout', 'index'],
                         'allow' => true,
-                        'roles' => ['@'],
+                        'roles' => ['admin', 'funcionario'], // Apenas admin e funcionário
                     ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'logout' => ['post'],
+                    [
+                        'allow' => false,
+                        'roles' => ['cliente'], // Bloqueia clientes
+                    ],
                 ],
             ],
         ];

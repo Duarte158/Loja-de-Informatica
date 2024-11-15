@@ -12,7 +12,7 @@ use yii\web\UploadedFile;
 /**
  * ArtigosController implements the CRUD actions for Artigos model.
  */
-class ArtigosController extends Controller
+class ArtigosController extends SiteController
 {
     /**
      * @inheritDoc
