@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 /**
  * IvaController implements the CRUD actions for Iva model.
  */
-class IvaController extends Controller
+class IvaController extends SiteController
 {
     /**
      * @inheritDoc

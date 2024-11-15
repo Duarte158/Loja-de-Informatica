@@ -11,7 +11,12 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
-    'modules' => [],
+
+    'modules' => [
+        'api' => [
+            'class' => 'backend\modules\api\ModuleAPI',
+        ],
+        ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
@@ -39,9 +44,15 @@ return [
         ],
 
         'urlManager' => [
-            'enablePrettyUrl' => false,
-            'showScriptName' => true,
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'enableStrictParsing' => true,
             'rules' => [
+                // Regras para a API
+                ['class' => 'yii\rest\UrlRule', 'controller' => ['api/artigos', 'api/user'], 'pluralize' => false],
+
+                // Regra geral para rotas do backend
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ],
         ],
 

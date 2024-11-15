@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 /**
  * FornecedorController implements the CRUD actions for fornecedor model.
  */
-class FornecedorController extends Controller
+class FornecedorController extends SiteController
 {
     /**
      * @inheritDoc
