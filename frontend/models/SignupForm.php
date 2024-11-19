@@ -16,9 +16,6 @@ class SignupForm extends Model
     public $email;
     public $password;
 
-
-
-
     public $nome;
     public $morada;
     public $contacto;
@@ -63,36 +60,40 @@ class SignupForm extends Model
      *
      * @return bool whether the creating new account was successful and email was sent
      */
-    public function signup()
-    {
-        if ($this->validate()) {
-            $user = new User();
+public function signup()
+{
+    if ($this->validate()) {
+        $user = new User();
 
-            $user->username = $this->username;
-            $user->email = $this->email;
-            $user->setPassword($this->password);
-            $user->generateAuthKey();
-            $user->save(false);
+        $user->username = $this->username;
+        $user->email = $this->email;
+        $user->setPassword($this->password);
+        $user->generateAuthKey();
+        $user->save(false);
 
-            $profile = new Profile();
-            $profile->user_id = $user->id;
-            $profile->nome= $this->nome;
-            $profile->nif = $this->nif;
-            $profile->morada = $this->morada;
-            $profile->contacto = $this->contacto;
-            $profile->cidade = $this->cidade;
-            $profile->codPostal = $this->codPostal;
+        $profile = new Profile();
+        $profile->user_id = $user->id;
+        $profile->nome = $this->nome;
+        $profile->nif = $this->nif;
+        $profile->morada = $this->morada;
+        $profile->contacto = $this->contacto;
+        $profile->cidade = $this->cidade;
+        $profile->codPostal = $this->codPostal;
+
+        if ($profile->validate()) {
             $profile->save(false);
 
 
+
             return $user;
-
-
-
+        } else {
+            // Handle validation errors
+            Yii::error('Profile validation failed: ' . json_encode($profile->errors));
         }
-
-        return null;
     }
+
+    return null;
+}
     /**
      * Sends confirmation email to user
      * @param User $user user model to with email should be send
