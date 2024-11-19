@@ -78,46 +78,18 @@ class UserController extends SiteController
      */
     public function actionCreate()
     {
-        $userModel = new User(); // Modelo para a tabela `user`
-        $profileModel = new Profile(); // Modelo para a tabela `profile`
+        $model = new User();
 
         if ($this->request->isPost) {
-            $postData = $this->request->post();
-
-            // Carregar os dados enviados no formulário para os modelos
-            if ($userModel->load($postData) && $profileModel->load($postData)) {
-                // Configurar senha e outros atributos automáticos
-                $userModel->setPassword($userModel->password); // Gera o hash da senha
-                $userModel->generateAuthKey(); // Gera a chave de autenticação
-
-                // Iniciar transação para garantir consistência entre as tabelas
-                $transaction = Yii::$app->db->beginTransaction();
-                try {
-                    // Salvar o usuário
-                    if ($userModel->save()) {
-                        // Associar o ID do usuário ao perfil
-                        $profileModel->user_id = $userModel->id;
-
-                        // Salvar o perfil
-                        if ($profileModel->save()) {
-                            $transaction->commit(); // Confirma a transação
-                            return $this->redirect(['view', 'id' => $userModel->id]);
-                        }
-                    }
-
-                    // Se algo der errado, reverte a transação
-                    $transaction->rollBack();
-                } catch (\Exception $e) {
-                    $transaction->rollBack();
-                    throw $e;
-                }
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
             }
+        } else {
+            $model->loadDefaultValues();
         }
 
-        // Exibir o formulário para criação do usuário e perfil
         return $this->render('create', [
-            'userModel' => $userModel,
-            'profileModel' => $profileModel,
+            'model' => $model,
         ]);
     }
 
@@ -130,14 +102,31 @@ class UserController extends SiteController
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($id); // Carrega o modelo User
+        $profile = $model->profile ?? new Profile(); // Carrega ou cria o Profile
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(\Yii::$app->request->post()) && $profile->load(\Yii::$app->request->post())) {
+            $isValid = $model->validate() && $profile->validate(); // Valida ambos os modelos
+            if ($isValid) {
+                // Salva o User
+                $model->save(false);
+
+                // Relaciona o Profile com o User
+                $profile->user_id = $model->id;
+
+                // Atualiza o campo nome no Profile com o username do User
+                $profile->nome = $model->username;
+
+                // Salva o Profile
+                $profile->save(false);
+
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('update', [
             'model' => $model,
+            'profile' => $profile,
         ]);
     }
 
