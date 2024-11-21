@@ -5,6 +5,7 @@ use yii\db\Migration;
 /**
  * Class m241025_141111_init_rbac
  */
+
 class m241025_141111_init_rbac extends Migration
 {
     /**
