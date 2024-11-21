@@ -67,6 +67,6 @@ class Profile extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::class, ['id' => 'user_id']);
+        return $this->belongsTo(User::class, ['user_id' => 'id']);
     }
 }

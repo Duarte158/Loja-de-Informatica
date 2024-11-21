@@ -103,8 +103,8 @@ class m241025_141111_init_rbac extends Migration
 
 
         $auth->assign($admin, 1);
-        $auth->assign($func, 2);
-        $auth->assign($cliente, 3);
+        //$auth->assign($func, 2);
+        //$auth->assign($cliente, 3);
 
         $auth->addChild($admin , $func);
     }

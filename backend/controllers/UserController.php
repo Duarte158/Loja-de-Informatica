@@ -102,14 +102,31 @@ class UserController extends SiteController
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($id); // Carrega o modelo User
+        $profile = $model->profile ?? new Profile(); // Carrega ou cria o Profile
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(\Yii::$app->request->post()) && $profile->load(\Yii::$app->request->post())) {
+            $isValid = $model->validate() && $profile->validate(); // Valida ambos os modelos
+            if ($isValid) {
+                // Salva o User
+                $model->save(false);
+
+                // Relaciona o Profile com o User
+                $profile->user_id = $model->id;
+
+                // Atualiza o campo nome no Profile com o username do User
+                $profile->nome = $model->username;
+
+                // Salva o Profile
+                $profile->save(false);
+
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('update', [
             'model' => $model,
+            'profile' => $profile,
         ]);
     }
 
