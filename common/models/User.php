@@ -142,7 +142,7 @@ class User extends ActiveRecord implements IdentityInterface
             return false;
         }
 
-        $timestamp = (int) substr($token, strrpos($token, '_') + 1);
+        $timestamp = (int)substr($token, strrpos($token, '_') + 1);
         $expire = Yii::$app->params['user.passwordResetTokenExpire'];
         return $timestamp + $expire >= time();
     }
@@ -236,5 +236,11 @@ class User extends ActiveRecord implements IdentityInterface
             $this->setPassword($this->password);
         }
         return parent::beforeSave($insert);
+    }
+
+
+    public function getAuthAssignments()
+    {
+        return $this->hasMany(AuthAssignment::class, ['user_id' => 'id']);
     }
 }

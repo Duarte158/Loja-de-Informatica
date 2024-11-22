@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\controllers\SiteController;
+use common\models\Profile;
 use common\models\User;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -41,16 +42,6 @@ class UserController extends SiteController
     {
         $dataProvider = new ActiveDataProvider([
             'query' => User::find(),
-            /*
-            'pagination' => [
-                'pageSize' => 50
-            ],
-            'sort' => [
-                'defaultOrder' => [
-                    'id' => SORT_DESC,
-                ]
-            ],
-            */
         ]);
 
         return $this->render('index', [
@@ -82,7 +73,14 @@ class UserController extends SiteController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
+                // Atribui a role de "funcionário" ao usuário recém-criado
+                $auth = \Yii::$app->authManager;
+                $role = $auth->getRole('funcionario');
+                $auth->assign($role, $model->id);
+
                 return $this->redirect(['view', 'id' => $model->id]);
+            } else {
+                \Yii::error("Erro ao criar usuário: " . json_encode($model->errors));
             }
         } else {
             $model->loadDefaultValues();
@@ -139,7 +137,13 @@ class UserController extends SiteController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        // Delete related profiles first
+        \common\models\Profile::deleteAll(['user_id' => $model->id]);
+
+        // Now delete the user
+        $model->delete();
 
         return $this->redirect(['index']);
     }
