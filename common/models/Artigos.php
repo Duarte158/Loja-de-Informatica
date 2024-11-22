@@ -18,12 +18,14 @@ use Yii;
  * @property int|null $referencia
  * @property string|null $imagem
  * @property float|null $precoFinal
+ * @property int|null $marca_id
  *
  * @property Categoria $categoria
  * @property Iva $iva
  * @property Linhacarrinho[] $linhacarrinhos
  * @property Linhacompras[] $linhacompras
  * @property Linhafatura[] $linhafaturas
+ * @property Marca $marca
  */
 class Artigos extends \yii\db\ActiveRecord
 {
@@ -42,10 +44,11 @@ class Artigos extends \yii\db\ActiveRecord
     {
         return [
             [['precoUni', 'precoFinal'], 'number'],
-            [['stock', 'categoria_id', 'iva_id', 'destaque', 'referencia'], 'integer'],
+            [['stock', 'categoria_id', 'iva_id', 'destaque', 'referencia', 'marca_id'], 'integer'],
             [['nome', 'descricao', 'imagem'], 'string', 'max' => 45],
             [['categoria_id'], 'exist', 'skipOnError' => true, 'targetClass' => Categoria::class, 'targetAttribute' => ['categoria_id' => 'id']],
             [['iva_id'], 'exist', 'skipOnError' => true, 'targetClass' => Iva::class, 'targetAttribute' => ['iva_id' => 'id']],
+            [['marca_id'], 'exist', 'skipOnError' => true, 'targetClass' => Marca::class, 'targetAttribute' => ['marca_id' => 'id']],
         ];
     }
 
@@ -66,6 +69,7 @@ class Artigos extends \yii\db\ActiveRecord
             'referencia' => 'Referencia',
             'imagem' => 'Imagem',
             'precoFinal' => 'Preco Final',
+            'marca_id' => 'Marca ID',
         ];
     }
 
@@ -104,18 +108,28 @@ class Artigos extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-  /*  public function getLinhacompras()
+    public function getLinhacompras()
     {
-        return $this->hasMany(LinhaCarrinho::class, ['artigo_id' => 'Id']);
-    }*/
+        return $this->hasMany(Linhacompras::class, ['artigo_id' => 'Id']);
+    }
 
     /**
      * Gets query for [[Linhafaturas]].
      *
      * @return \yii\db\ActiveQuery
      */
- /*   public function getLinhafaturas()
+    public function getLinhafaturas()
     {
-        return $this->hasMany(LinhaCarrinho::class, ['artigo_id' => 'Id']);
-    }*/
+        return $this->hasMany(Linhafatura::class, ['artigo_id' => 'Id']);
+    }
+
+    /**
+     * Gets query for [[Marca]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMarca()
+    {
+        return $this->hasOne(Marca::class, ['id' => 'marca_id']);
+    }
 }

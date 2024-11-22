@@ -2,17 +2,16 @@
 
 namespace backend\controllers;
 
-use common\models\Artigos;
+use common\models\Marca;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
 
 /**
- * ArtigosController implements the CRUD actions for Artigos model.
+ * MarcaController implements the CRUD actions for Marca model.
  */
-class ArtigosController extends SiteController
+class MarcaController extends Controller
 {
     /**
      * @inheritDoc
@@ -33,21 +32,21 @@ class ArtigosController extends SiteController
     }
 
     /**
-     * Lists all Artigos models.
+     * Lists all Marca models.
      *
      * @return string
      */
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Artigos::find(),
+            'query' => Marca::find(),
             /*
             'pagination' => [
                 'pageSize' => 50
             ],
             'sort' => [
                 'defaultOrder' => [
-                    'Id' => SORT_DESC,
+                    'id' => SORT_DESC,
                 ]
             ],
             */
@@ -59,46 +58,30 @@ class ArtigosController extends SiteController
     }
 
     /**
-     * Displays a single Artigos model.
-     * @param int $Id ID
+     * Displays a single Marca model.
+     * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($Id)
+    public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($Id),
+            'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new Artigos model.
+     * Creates a new Marca model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Artigos();
+        $model = new Marca();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->validate()) {
-
-                // Calcular o precoFinal
-                $ivaPercentage = $model->iva->percentagem; // Certifique-se de que o valor do iva_id seja o percentual
-                $model->precoFinal = round($model->precoUni * (1 + $ivaPercentage / 100), 2); // Arredondar para 2 casas decimais
-                $model->stock = 0;
-                // Carregar e salvar a imagem
-                $imagem = UploadedFile::getInstance($model, 'imagem');
-                if ($imagem) {
-                    $imagePath = 'C:\wamp64\www\Loja-de-Informatica\frontend\web\imagens\materiais\\' . $imagem->name;
-                    $imagem->saveAs($imagePath);
-                    $model->imagem = $imagem->name;
-                }
-
-                // Salvar o modelo com precoFinal e imagem
-                if ($model->save(false)) {
-                    return $this->redirect(['view', 'Id' => $model->Id]);
-                }
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -110,18 +93,18 @@ class ArtigosController extends SiteController
     }
 
     /**
-     * Updates an existing Artigos model.
+     * Updates an existing Marca model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $Id ID
+     * @param int $id ID
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($Id)
+    public function actionUpdate($id)
     {
-        $model = $this->findModel($Id);
+        $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'Id' => $model->Id]);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -130,29 +113,29 @@ class ArtigosController extends SiteController
     }
 
     /**
-     * Deletes an existing Artigos model.
+     * Deletes an existing Marca model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $Id ID
+     * @param int $id ID
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($Id)
+    public function actionDelete($id)
     {
-        $this->findModel($Id)->delete();
+        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Artigos model based on its primary key value.
+     * Finds the Marca model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $Id ID
-     * @return Artigos the loaded model
+     * @param int $id ID
+     * @return Marca the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($Id)
+    protected function findModel($id)
     {
-        if (($model = Artigos::findOne(['Id' => $Id])) !== null) {
+        if (($model = Marca::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

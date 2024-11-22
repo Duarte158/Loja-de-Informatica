@@ -31,7 +31,7 @@ $this->title = 'Página Inicial';
 
 <!-- intro -->
 <section class="pt-3">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row gx-3">
             <main class="col-lg-9">
                 <div class="card-banner p-5 bg-primary rounded-5" style="height: 350px;">

@@ -70,6 +70,40 @@ class CarrinhoComprasController extends Controller
     }
 
 
+    public function actionCheckout()
+    {
+        // Verifica se o usuário está logado
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+
+        // Obtém o carrinho "ativo" do usuário logado
+        $carrinho = CarrinhoCompras::find()
+            ->where(['user_id' => Yii::$app->user->id, 'estado' => 'ativo'])
+            ->one();
+
+        // Se o carrinho não existir ou estiver vazio, redireciona o usuário
+        if ($carrinho === null) {
+            Yii::$app->session->setFlash('info', 'Seu carrinho está vazio.');
+            return $this->redirect(['site/index']); // Redireciona para uma página apropriada
+        }
+
+        // Obtém as linhas do carrinho para listar os itens no checkout
+        $linhasCarrinho = \common\models\Linhacarrinho::find()
+            ->where(['carrinho_id' => $carrinho->id])
+            ->all();
+
+        $user = Yii::$app->user->identity;
+
+        // Renderiza a página de checkout, passando as linhas do carrinho
+        return $this->render('checkout', [
+            'linhasCarrinho' => $linhasCarrinho,
+            'carrinho' => $carrinho,
+            'user' => $user,
+        ]);
+    }
+
+
 
 
     public function actionAtualizarQuantidade()

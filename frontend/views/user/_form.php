@@ -12,15 +12,14 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'username')->textInput() ?>
-    <?= $form->field($model, 'password')->passwordInput() ?>
     <?= $form->field($model, 'email')->textInput() ?>
 
 
 
-    <?= $form->field($model, 'nome')->textInput() ?>
-    <?= $form->field($model, 'nif')->textInput() ?>
-    <?= $form->field($model, 'morada')->textInput() ?>
-    <?= $form->field($model, 'contacto')->textInput() ?>
+    <?= $form->field($model->profile, 'nome')->textInput() ?>
+    <?= $form->field($model->profile, 'nif')->textInput() ?>
+    <?= $form->field($model->profile, 'morada')->textInput() ?>
+    <?= $form->field($model->profile, 'contacto')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

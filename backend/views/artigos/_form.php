@@ -33,6 +33,12 @@ use yii\widgets\ActiveForm;
         ['prompt' => 'Selecione o Iva']
     ) ?>
 
+
+    <?= $form->field($model, 'marca_id')->dropDownList(
+        ArrayHelper::map(\common\models\Marca::find()->all(), 'id', 'nome'),
+        ['prompt' => 'Selecione a marca']
+    ) ?>
+
     <?= $form->field($model, 'destaque')->checkbox() ?>
 
 
