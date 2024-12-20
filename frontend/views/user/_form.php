@@ -13,9 +13,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'username')->textInput() ?>
     <?= $form->field($model, 'email')->textInput() ?>
-
-
-
     <?= $form->field($model->profile, 'nome')->textInput() ?>
     <?= $form->field($model->profile, 'nif')->textInput() ?>
     <?= $form->field($model->profile, 'morada')->textInput() ?>

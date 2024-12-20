@@ -53,11 +53,6 @@ class ArtigosController extends \yii\web\Controller
 
             $produto = Artigos::findOne($id);
 
-            if (!$produto) {
-                Yii::$app->session->setFlash('error', 'Produto não encontrado.');
-                return $this->redirect(['site/index']);
-            }
-
             // Verifica se o usuário está logado
             if (!Yii::$app->user->isGuest) {
                 $carrinho = Carrinhocompras::find()
@@ -74,21 +69,11 @@ class ArtigosController extends \yii\web\Controller
                     $carrinho->user_id = Yii::$app->user->id;
                     $carrinho->data = date('Y-m-d H:i:s');
                     $carrinho->estado = 'ativo';
-                    if (!$carrinho->save()) {
-                        Yii::error('Erro ao salvar o carrinho: ' . json_encode($carrinho->errors));
-                        Yii::$app->session->setFlash('error', 'Erro ao criar o carrinho.');
-                        return $this->redirect(['site/index']);
-                    }
-                }
-
-                if (!$carrinho->id) {
-                    Yii::error('O ID do carrinho está nulo após a criação.');
-                    Yii::$app->session->setFlash('error', 'Erro ao obter o ID do carrinho.');
-                    return $this->redirect(['site/index']);
+                    $carrinho->save();
                 }
 
                 // Verifica se o produto já está no carrinho
-                $linhaCarrinho = LinhaCarrinho::find()
+                $linhaCarrinho = Linhacarrinho::find()
                     ->where([
                         'carrinho_id' => $carrinho->id,
                         'artigo_id' => $produto->Id
@@ -96,9 +81,11 @@ class ArtigosController extends \yii\web\Controller
                     ->one();
 
                 if ($linhaCarrinho) {
+                    // Se o produto já existe no carrinho, incrementa a quantidade e atualiza o valor total
                     $linhaCarrinho->quantidade += $quantidade;
                     $linhaCarrinho->valorTotal = round($linhaCarrinho->valor * $linhaCarrinho->quantidade, 2);
                 } else {
+                    // Caso contrário, cria uma nova linha no carrinho para o produto
                     $linhaCarrinho = new Linhacarrinho();
                     $linhaCarrinho->carrinho_id = $carrinho->id;
                     $linhaCarrinho->artigo_id = $produto->Id;
@@ -107,16 +94,16 @@ class ArtigosController extends \yii\web\Controller
                     $linhaCarrinho->valorTotal = round($produto->precoFinal * $quantidade, 2);
                 }
 
+                // Salva a linha do carrinho e atualiza os valores totais do carrinho
                 if ($linhaCarrinho->save()) {
                     $carrinho->valorIva = $carrinho->getTotalIva();
                     $carrinho->valorTotal = $carrinho->getTotalValue();
                     $carrinho->save();
 
                     Yii::$app->session->setFlash('success', 'Produto adicionado ao carrinho com sucesso.');
-                    return $this->redirect(['carrinho-compras/index']);
+                    return $this->redirect(['carrinho-compras/index']);  // Altere o redirecionamento para onde desejar
                 } else {
                     Yii::error('Erro ao salvar linha do carrinho: ' . json_encode($linhaCarrinho->errors));
-                    Yii::$app->session->setFlash('error', 'Erro ao adicionar produto ao carrinho.');
                     return $this->redirect(['site/index']);
                 }
             } else {
@@ -124,6 +111,7 @@ class ArtigosController extends \yii\web\Controller
             }
         }
     }
+
 
 
     public function actionArtigosView($Id)

@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Artigos;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -75,7 +76,16 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $destaques = Artigos::find()
+            ->where(['destaque' => 1]) // Busca artigos em destaque
+            ->limit(8)                 // Limita a 8 resultados
+            ->all();
+
+
+        return $this->render('index', [
+            'destaques' => $destaques,
+        ]);
+
     }
 
     /**

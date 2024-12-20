@@ -71,16 +71,21 @@ class UserController extends SiteController
     {
         $model = new User();
 
+        // Obter lista de roles para o dropdown
+        $auth = \Yii::$app->authManager;
+        $roles = $auth->getRoles();
+        $rolesList = \yii\helpers\ArrayHelper::map($roles, 'name', 'name'); // Mapear name => name
+
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                // Atribui a role de "funcionário" ao usuário recém-criado
-                $auth = \Yii::$app->authManager;
-                $role = $auth->getRole('funcionario');
-                $auth->assign($role, $model->id);
+                // Atribuir a role selecionada
+                $selectedRole = $this->request->post('User')['role']; // Obter a role do POST
+                if ($selectedRole) {
+                    $role = $auth->getRole($selectedRole);
+                    $auth->assign($role, $model->id); // Atribuir a role ao usuário criado
+                }
 
                 return $this->redirect(['view', 'id' => $model->id]);
-            } else {
-                \Yii::error("Erro ao criar usuário: " . json_encode($model->errors));
             }
         } else {
             $model->loadDefaultValues();
@@ -88,8 +93,11 @@ class UserController extends SiteController
 
         return $this->render('create', [
             'model' => $model,
+            'roles' => $rolesList, // Passar a lista de roles para a view
         ]);
     }
+
+
 
     /**
      * Updates an existing User model.

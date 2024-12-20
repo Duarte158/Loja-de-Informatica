@@ -37,7 +37,7 @@ $csrfToken = Yii::$app->request->csrfToken;
                         <?php foreach ($linhasCarrinho as $linhaCarrinho): ?>
                             <div class="row mb-4">
                                 <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                                    <?php $imagemSrc = 'http://localhost/Loja-de-Informatica/frontend/web/imagens/materiais/' . $linhaCarrinho->artigo->imagem;
+                                    <?php $imagemSrc = 'http://localhost/LojaDeInformatica/frontend/web/imagens/materiais/' . $linhaCarrinho->artigo->imagem;
                                     ?>
                                     <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
                                         <img src="<?= $imagemSrc ?>" class="w-100" alt="<?= $linhaCarrinho->artigo->nome ?>"/>

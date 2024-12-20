@@ -36,6 +36,11 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public $password;
 
+    /**
+     * Atributo temporário para a senha
+     */
+    public $role;
+
     public function getProfile()
     {
         return $this->hasOne(Profile::class, ['user_id' => 'id']);
@@ -68,6 +73,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
             ['password', 'string', 'min' => 6], // Adicionando validação para a senha
+            ['role', 'string'], // Validação da role
         ];
     }
 

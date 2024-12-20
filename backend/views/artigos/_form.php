@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -9,40 +8,34 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="product-form">
+<div class="artigos-form">
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'referencia')->textInput(['maxlength' => true]) ?>
-
     <?= $form->field($model, 'nome')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'precoUni')->textInput() ?>
 
     <?= $form->field($model, 'descricao')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'precoUni')->textInput() ?>
+
+    <?= $form->field($model, 'stock')->textInput() ?>
+
+    <?= $form->field($model, 'categoria_id')->textInput() ?>
+
+    <?= $form->field($model, 'iva_id')->textInput() ?>
+
+    <?= $form->field($model, 'destaque')->textInput() ?>
+
+    <?= $form->field($model, 'referencia')->textInput() ?>
 
 
-    <?= $form->field($model, 'categoria_id')->dropDownList(
-        ArrayHelper::map(\common\models\Categoria::find()->all(), 'id', 'descricao'),
-        ['prompt' => 'Selecione a categoria']
-    ) ?>
+    <?= $form->field($model, 'precoFinal')->textInput() ?>
 
-    <?= $form->field($model, 'iva_id')->dropDownList(
-        ArrayHelper::map(\common\models\Iva::find()->all(), 'id', 'descricao'),
-        ['prompt' => 'Selecione o Iva']
-    ) ?>
+    <?= $form->field($model, 'marca_id')->textInput() ?>
+
+    <?= $form->field($model, 'imagem')->fileInput() ?> <!-- Campo de upload de imagem -->
 
 
-    <?= $form->field($model, 'marca_id')->dropDownList(
-        ArrayHelper::map(\common\models\Marca::find()->all(), 'id', 'nome'),
-        ['prompt' => 'Selecione a marca']
-    ) ?>
-
-    <?= $form->field($model, 'destaque')->checkbox() ?>
-
-
-    <?= $form->field($model, 'imagem')->fileInput() ?>
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
@@ -50,4 +43,3 @@ use yii\widgets\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
-
