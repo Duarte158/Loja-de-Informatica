@@ -20,6 +20,14 @@ $this->title = 'Página Inicial';
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
+<style>
+    .card-banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;  /* A imagem vai cobrir toda a div sem distorcer */
+    }
+</style>
+
 <body>
 
 
@@ -32,23 +40,28 @@ $this->title = 'Página Inicial';
     <div class="container-fluid">
         <div class="row gx-3">
             <main class="col-lg-9">
-                <div class="card-banner p-5 bg-primary rounded-5" style="height: 350px;">
-                    <div style="max-width: 500px;">
-                        <h2 class="text-white">
-                            Great products with <br />
-                            best deals
-                        </h2>
-                        <p class="text-white">No matter how far along you are in your sophistication as an amateur astronomer, there is always one.</p>
-                        <a href="#" class="btn btn-light shadow-0 text-primary"> View more </a>
+                <div class="card-banner p-5 rounded-5"
+                     style="
+                        height: 350px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background: none; /* Remove fundo */
+                     ">
+                    <div style="max-width: 500px; text-align: center;">
+                        <?php
+                        $imagemSrc = 'http://localhost/LojaDeInformatica/frontend/web/imagens/materiais/banner.png';
+                        ?>
+                        <img src="<?= $imagemSrc ?>" alt="Banner" style="max-width: 100%; height: auto; border-radius: 8px;" />
                     </div>
                 </div>
             </main>
             <aside class="col-lg-3">
                 <div class="card-banner h-100 rounded-5" style="background-color: #f87217;">
                     <div class="card-body text-center pb-5">
-                        <h5 class="pt-5 text-white">Amazing Gifts</h5>
-                        <p class="text-white">No matter how far along you are in your sophistication</p>
-                        <a href="#" class="btn btn-outline-light"> View more </a>
+                        <h5 class="pt-5 text-white">Configurador</h5>
+                        <p class="text-white">Aproveita e vem montar o teu pc conosco...</p>
+                        <a href="#" class="btn btn-outline-light"> Ver Mais </a>
                     </div>
                 </div>
             </aside>
@@ -57,6 +70,8 @@ $this->title = 'Página Inicial';
     </div>
     <!-- container end.// -->
 </section>
+
+
 <!-- intro -->
 
 <!-- category -->

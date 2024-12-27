@@ -50,6 +50,23 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
             padding-right: 1rem;
             padding-left: 1rem;
         }
+
+        footer {
+            margin-top: auto; /* Empurra o footer para o final da página */
+            background-color: #f8f9fa; /* Cor de fundo para distinguir */
+            padding: 10px; /* Ajuste o preenchimento conforme necessário */
+            text-align: center;
+        }
+
+        .main-content {
+            width: 80%; /* Limita a largura do conteúdo */
+            max-width: 1200px; /* Define um limite máximo para layouts maiores */
+            background: #f8f9fa; /* Cor de fundo para destaque (opcional) */
+            border-radius: 8px; /* Bordas arredondadas (opcional) */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
+            padding: 20px; /* Espaço interno */
+            margin: 0 auto; /* Centraliza horizontalmente */
+        }
     </style>
 </head>
 <body class="d-flex flex-column h-100">
@@ -58,7 +75,7 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
 <header>
     <!-- Jumbotron -->
     <div class="p-3 text-center bg-white border-bottom">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row align-items-center">
                 <!-- Left elements -->
                 <div class="col-md-4 d-flex justify-content-center justify-content-md-start mb-3 mb-md-0">
@@ -142,76 +159,44 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
                 <div class="collapse navbar-collapse" id="navbarExampleOnHover">
                     <!-- Left links -->
                     <ul class="navbar-nav me-auto ps-lg-0" style="padding-left: 0.15rem">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Regular link</a>
-                        </li>
                         <!-- Navbar dropdown -->
                         <li class="nav-item dropdown dropdown-hover position-static">
                             <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
                                role="button"
                                data-mdb-toggle="dropdown" aria-expanded="false">
-                                Mega menu
+                                Categorias
                             </a>
-                            <!-- Dropdown menu -->
-                            <div class="dropdown-menu w-100 mt-0" aria-labelledby="navbarDropdown" style="border-top-left-radius: 0;
-                            border-top-right-radius: 0;
-                          ">
 
+                            <!--    Codigo para exibir as categorias    -->
+                            <?php
+                            $categorias = common\models\Categoria::find()->all();
+
+                            // Dividindo as categorias em colunas para exibição (4 colunas neste caso)
+                            $categoriasPorColuna = array_chunk($categorias, ceil(count($categorias) / 4));
+                            ?>
+
+                            <!-- Dropdown menu -->
+                            <div class="dropdown-menu w-100 mt-0" aria-labelledby="navbarDropdown" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                                 <div class="container">
                                     <div class="row my-4">
-                                        <div class="col-md-6 col-lg-3 mb-3 mb-lg-0">
-                                            <div class="list-group list-group-flush">
-                                                <a href="<?= Url::to(['artigos/artigos', 'id' => 1]) ?>"
-                                                   class="list-group-item list-group-item-action">Ratos</a>
-                                                <a href="" class="list-group-item list-group-item-action">Dolor sit</a>
-                                                <a href="" class="list-group-item list-group-item-action">Amet
-                                                    consectetur</a>
-                                                <a href="" class="list-group-item list-group-item-action">Cras justo
-                                                    odio</a>
-                                                <a href="" class="list-group-item list-group-item-action">Adipisicing
-                                                    elit</a>
+                                        <?php foreach ($categoriasPorColuna as $coluna): ?>
+                                            <div class="col-md-6 col-lg-3 mb-3 mb-lg-0">
+                                                <div class="list-group list-group-flush">
+                                                    <?php foreach ($coluna as $categoria): ?>
+                                                        <a href="<?= Url::to(['artigos/artigos', 'id' => $categoria->id]) ?>"
+                                                           class="list-group-item list-group-item-action">
+                                                            <?= htmlspecialchars($categoria->descricao) ?>
+                                                        </a>
+                                                    <?php endforeach; ?>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6 col-lg-3 mb-3 mb-lg-0">
-                                            <div class="list-group list-group-flush">
-                                                <a href="" class="list-group-item list-group-item-action">Explicabo
-                                                    voluptas</a>
-                                                <a href="" class="list-group-item list-group-item-action">Perspiciatis
-                                                    quo</a>
-                                                <a href="" class="list-group-item list-group-item-action">Cras justo
-                                                    odio</a>
-                                                <a href="" class="list-group-item list-group-item-action">Laudantium
-                                                    maiores</a>
-                                                <a href="" class="list-group-item list-group-item-action">Provident
-                                                    dolor</a>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-lg-3 mb-3 mb-md-0">
-                                            <div class="list-group list-group-flush">
-                                                <a href="" class="list-group-item list-group-item-action">Iste
-                                                    quaerato</a>
-                                                <a href="" class="list-group-item list-group-item-action">Cras justo
-                                                    odio</a>
-                                                <a href="" class="list-group-item list-group-item-action">Est iure</a>
-                                                <a href=""
-                                                   class="list-group-item list-group-item-action">Praesentium</a>
-                                                <a href="" class="list-group-item list-group-item-action">Laboriosam</a>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-lg-3">
-                                            <div class="list-group list-group-flush">
-                                                <a href="" class="list-group-item list-group-item-action">Cras justo
-                                                    odio</a>
-                                                <a href="" class="list-group-item list-group-item-action">Saepe</a>
-                                                <a href="" class="list-group-item list-group-item-action">Vel alias</a>
-                                                <a href="" class="list-group-item list-group-item-action">Sunt
-                                                    doloribus</a>
-                                                <a href="" class="list-group-item list-group-item-action">Cum
-                                                    dolores</a>
-                                            </div>
-                                        </div>
+                                        <?php endforeach; ?>
                                     </div>
                                 </div>
+                            </div>
+                        </li>
+                        <!-- Fim do codigo para exibir as categorias -->
+
                             </div>
                         </li>
                     </ul>
@@ -231,52 +216,16 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
 </header>
 <!--Main Navigation-->
 <main class="flex-shrink-0">
-    <div class="container">
+    <div class="main-content">
         <?= $content ?>
     </div>
 </main>
+<!-- Footer -->
 <footer class="text-center text-lg-start bg-light text-muted">
-    <!-- Section: Social media -->
-    <section class="p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-        <div class="container">
-            <div class="row d-flex">
-                <!-- Left -->
-                <div class="col-md-6 col-sm-12 mb-2 mb-md-0 d-flex justify-content-center justify-content-md-start">
-                    <div class="">
-                        <div class="input-group" style="max-width: 400px;">
-                            <input type="email" class="form-control border" placeholder="Email" aria-label="Email"
-                                   aria-describedby="button-addon2"/>
-                            <button class="btn btn-light border" type="button" id="button-addon2"
-                                    data-mdb-ripple-color="dark">
-                                Subscribe
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Left -->
-
-                <!-- Right -->
-                <div class="col-md-6 col-sm-12 float-center">
-                    <div class="float-md-end">
-                        <a class="btn btn-icon btn-light text-secondary px-3 border" title="Facebook" target="_blank"
-                           href="#"><i class="fab fa-facebook-f fa-lg"></i></a>
-                        <a class="btn btn-icon btn-light text-secondary px-3 border" title="Instagram" target="_blank"
-                           href="#"><i class="fab fa-instagram fa-lg"></i></a>
-                        <a class="btn btn-icon btn-light text-secondary px-3 border" title="Youtube" target="_blank"
-                           href="#"><i class="fab fa-youtube fa-lg"></i></a>
-                        <a class="btn btn-icon btn-light text-secondary px-3 border" title="Twitter" target="_blank"
-                           href="#"><i class="fab fa-twitter fa-lg"></i></a>
-                    </div>
-                </div>
-                <!-- Right -->
-            </div>
-        </div>
-    </section>
-    <!-- Section: Social media -->
 
     <!-- Section: Links  -->
     <section class="">
-        <div class="container text-center text-md-start mt-5 mb-4">
+        <div class="container-fluid text-center text-md-start mt-5 mb-4">
             <!-- Grid row -->
             <div class="row mt-3">
                 <!-- Grid column -->
@@ -351,7 +300,7 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
         </div>
     </section>
     <!-- Section: Links  -->
-    <div class="container">
+    <div class="container-fluid">
         <div class="py-4 border-top">
             <div class="d-flex justify-content-between">
                 <!--- payment --->
@@ -366,6 +315,7 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
         </div>
     </div>
 </footer>
+<!-- Footer -->
 <?php $this->endBody() ?>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

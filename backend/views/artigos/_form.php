@@ -33,7 +33,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'marca_id')->textInput() ?>
 
-    <?= $form->field($model, 'imagem')->fileInput() ?> <!-- Campo de upload de imagem -->
+    <?= $form->field($model, 'imagem')->textInput() ?> <!-- Campo de upload de imagem -->
 
 
     <div class="form-group">
