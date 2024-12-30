@@ -22,51 +22,54 @@ $this->title = $categoria->descricao;
 </head>
 <body>
 <div class="content-wrapper">
-
     <section class="content">
         <div class="container-fluid">
             <div class="row">
+                <!-- Sidebar para filtragem por marca -->
                 <div class="col-md-3">
-
-                </div>
-                <div class="col-md-9">
-                    <!-- Lista de artigos -->
-                    <div class="card card-primary">
+                    <div class="card">
                         <div class="card-header">
-                            <h3>Categoria: <?= Html::encode($this->title) ?></h3>
+                            <h5>Filtrar por Marca</h5>
                         </div>
+                        <ul class="list-group list-group-flush">
+                            <?php foreach ($marcas as $marca): ?>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <a href="<?= Yii::$app->urlManager->createUrl(['artigos/artigos', 'id' => $categoria->id, 'marca' => $marca->id]) ?>">
+                                        <?= Html::encode($marca->nome) ?>
+                                    </a>
+                                    <span class="badge badge-primary badge-pill">
+                <?= $marca->artigos_count ?>
+            </span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
 
-
-
-
-
-                        <div class="col-lg-8 col-xl5 col-sm-4"> <!-- Ajustei os tamanhos das colunas -->
-                            <div class="filter-container p-0 row">
-                                <?php foreach ($artigos as $artigo): ?>
-                                    <?php
-                                    $imagemSrc = 'http://localhost/LojaDeInformatica/frontend/web/imagens/materiais/'.$artigo->imagem;
-                                    ?>
-                                    <div class="col-md-4 mb-4 filtr-item" data-categoria_id="<?= $artigo->categoria_id ?>">
-                                        <a href="<?= Yii::$app->urlManager->createUrl(['artigos/artigos-view', 'Id' => $artigo->Id]) ?>" style="text-decoration: none; color: inherit;">
-                                            <div class="card h-100 d-flex flex-column justify-content-between">
-                                                <img src="<?= $imagemSrc ?>" class="card-img-top" alt="<?= $artigo->nome ?>" />
-                                                <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                                                    <h5 class="card-title text-center"><?= $artigo->nome ?></h5>
-                                                    <span class="card-text text-center">Preço: <?= Html::encode(number_format($artigo->precoFinal, 2)) ?> €</span>
-                                                </div>
-                                            </div>
-                                        </a>
+                <!-- Listagem de artigos -->
+                <div class="col-md-9">
+                    <h3>Categoria: <?= Html::encode($categoria->descricao) ?></h3>
+                    <div class="row">
+                        <?php if (!empty($artigos)): ?>
+                            <?php foreach ($artigos as $artigo): ?>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card">
+                                        <img src="<?= Yii::getAlias('@web') . '/imagens/materiais/' . $artigo->imagem ?>" class="card-img-top" alt="<?= Html::encode($artigo->nome) ?>">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><?= Html::encode($artigo->nome) ?></h5>
+                                            <p class="card-text">Preço: <?= Html::encode(number_format($artigo->precoFinal, 2)) ?> €</p>
+                                            <a href="<?= Yii::$app->urlManager->createUrl(['artigos/artigos-view', 'Id' => $artigo->Id]) ?>" class="btn btn-primary">Ver Detalhes</a>
+                                        </div>
                                     </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <!-- Adicione a paginação aqui -->
-
-                        </div>
-
-
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p>Não foram encontrados artigos para os filtros selecionados.</p>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
 </div>

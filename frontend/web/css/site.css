@@ -1,3 +1,20 @@
+button,
+.btn {
+    background-color: white !important; /* Cor de fundo branca */
+    color: red !important;              /* Cor do texto vermelho */
+    border: 1px solid red !important;   /* Borda vermelha */
+    transition: background-color 0.3s;  /* Suave mudança de cor ao passar o mouse */
+    border-radius: 4px;                 /* (Opcional) Bordas arredondadas */
+}
+
+
+button:hover,
+.btn:hover {
+    background-color: red !important;   /* Fundo vermelho ao passar o mouse */
+    color: white !important;           /* Texto branco */
+    border-color: darkred !important;  /* Borda com tom mais escuro */
+}
+
 .icon-hover:hover {
     border-color: #3b71ca !important;
     background-color: white !important;
@@ -11,7 +28,7 @@
 
 /*nav css*/
 .nav-item {
-    padding: 0.5rem 0xp;
+    padding: 0.5rem ;
 }
 
 .dropdown-hover:hover>.dropdown-menu {

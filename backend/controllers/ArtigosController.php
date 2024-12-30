@@ -121,6 +121,15 @@ class ArtigosController extends SiteController
         $model = $this->findModel($Id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+
+
+            $imagem = UploadedFile::getInstance($model , 'imagem');
+            $imagem->saveAs('C:\wamp64\www\Loja-de-Informatica\frontend\web\imagens\materiais\\' . $imagem->name);
+            $model->imagem = $imagem->name;
+            $model->save();
+
+
+
             return $this->redirect(['view', 'Id' => $model->Id]);
         }
 
@@ -128,7 +137,6 @@ class ArtigosController extends SiteController
             'model' => $model,
         ]);
     }
-
     /**
      * Deletes an existing Artigos model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

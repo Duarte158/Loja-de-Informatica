@@ -61,8 +61,6 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
         .main-content {
             width: 80%; /* Limita a largura do conteúdo */
             max-width: 1200px; /* Define um limite máximo para layouts maiores */
-            background: #f8f9fa; /* Cor de fundo para destaque (opcional) */
-            border-radius: 8px; /* Bordas arredondadas (opcional) */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
             padding: 20px; /* Espaço interno */
             margin: 0 auto; /* Centraliza horizontalmente */
@@ -84,11 +82,9 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
                     </a>
                 </div>
                 <!-- Center elements -->
-                <div class="col-md-4 d-flex justify-content-center">
-                    <form action="<?= Yii::$app->urlManager->createUrl(['artigos/pesquisar']) ?>" method="get"
-                          class="d-flex input-group w-auto my-auto mb-3 mb-md-0">
-                        <input autocomplete="off" name="query" value="" type="search" class="form-control rounded"
-                               placeholder="Comece já a pesquisa"/>
+                <div class="col-md-4">
+                    <form action="<?= Url::to(['artigos/pesquisar']) ?>" method="get" class="d-flex input-group w-auto my-auto mb-3 mb-md-0">
+                        <input autocomplete="off" name="query" value="" type="search" class="form-control rounded" placeholder="Pesquise o seu artigo" />
                         <button type="submit" class="input-group-text border-0 d-none d-lg-flex">
                             <i class="fas fa-search"></i>
                         </button>
@@ -96,47 +92,57 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
                 </div>
                 <!-- Right elements -->
                 <div class="col-md-4 d-flex justify-content-center justify-content-md-end align-items-center">
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex">
                         <!-- Cart -->
                         <a class="text-reset me-3"
-                           href="<?= Yii::$app->urlManager->createUrl(['carrinho-compras/index']) ?>">
-                            <span><i class="fas fa-shopping-cart"></i></span>
-                            <span class="badge rounded-pill badge-notification bg-danger"><?= $cartItemCount ?></span>
+                           href="<?= Yii::$app->urlManager->createUrl(['carrinho-compras/index']) ?>"> <span><i
+                                        class="fas fa-shopping-cart"></i></span> <span
+                                    class="badge rounded-pill badge-notification bg-danger"><?= $cartItemCount ?></span>
                         </a>
-                        <!-- Profile -->
+
+                        <!-- Notification -->
+                        <a class="text-reset me-3"
+                           href="<?= Yii::$app->urlManager->createUrl(['wishlist/index']) ?>"> <span><i
+                                        class="fas fa-heart fa-lg px-1 text-black"></i></span>
+                        </a>
+
+                        <!-- Languages -->
+
+
+                        <!-- User -->
                         <div class="dropdown">
                             <?php if (Yii::$app->user->isGuest): ?>
-                                <a class="text-reset d-flex align-items-center hidden-arrow" href="#"
-                                   id="navbarDropdownMenuLink" role="button" onclick="toggleDropdown()">
-                                    <i class="bi bi-person" style="font-size: 1.5rem;"></i>
+                                <!-- Dropdown para usuário não autenticado -->
+                                <a href="<?= Url::to(['site/login']) ?>" class="text-reset d-flex align-items-center hidden-arrow">
+                                    <i class="fas fa-user-circle" style="font-size: 22px;"></i> <!-- Ícone de usuário -->
+                                    <span class="ms-2">Login</span> <!-- Texto para login -->
                                 </a>
-                                <!-- Dropdown for guests -->
-                                <ul class="dropdown-menu dropdown-menu-end" id="userDropdown" style="display: none;">
-                                    <li><a class="dropdown-item" href="<?= Url::to(['site/login']) ?>">Login</a></li>
-                                    <li><a class="dropdown-item" href="<?= Url::to(['site/signup']) ?>">Register</a>
-                                    </li>
-                                </ul>
                             <?php else: ?>
-                                <a class="text-reset d-flex align-items-center hidden-arrow" href="#"
-                                   id="navbarDropdownMenuLink" role="button" onclick="toggleDropdown()">
-                                    <i class="bi bi-person" style="font-size: 1.5rem;"></i>
+                                <!-- Dropdown para usuário autenticado -->
+                                <?php $username = Yii::$app->user->identity->username; // ou use o campo correspondente ao nome do usuário ?>
+                                <a class="text-reset dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
+                                   id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-circle" style="font-size: 22px;"></i> <!-- Ícone de usuário -->
+
+                                    <span class="ms-2"><?= Html::encode($username) ?></span> <!-- Nome do usuário -->
                                 </a>
-                                <!-- Dropdown for logged-in users -->
-                                <ul class="dropdown-menu dropdown-menu-end" id="userDropdown" style="display: none;">
-                                    <li><a class="dropdown-item" href="<?= Url::to(['user/index']) ?>">Perfil</a></li>
-                                    <li><a class="dropdown-item" href="/settings">Configurações</a></li>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                                    <li><a class="dropdown-item" href="<?= Url::to(['user/index']) ?>">Meu Perfil</a></li>
+                                    <li><a class="dropdown-item" href="<?= Url::to(['user/compras']) ?>">Compras</a></li>
                                     <li>
-                                        <?= Html::beginForm(['/site/logout'], 'post')
-                                        . Html::submitButton(
-                                            'Logout (' . Yii::$app->user->identity->username . ')',
-                                            ['class' => 'dropdown-item text-decoration-none']
-                                        )
-                                        . Html::endForm();
-                                        ?>
+                                        <?= Html::a('Terminar Sessão', ['site/logout'], [
+                                            'class' => 'dropdown-item',
+                                            'data' => [
+                                                'method' => 'POST',
+                                                'confirm' => 'Tem certeza de que deseja terminar a sessão?',
+                                            ],
+                                        ]) ?>
                                     </li>
                                 </ul>
                             <?php endif; ?>
                         </div>
+
+
                     </div>
                 </div>
             </div>
@@ -159,6 +165,12 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
                 <div class="collapse navbar-collapse" id="navbarExampleOnHover">
                     <!-- Left links -->
                     <ul class="navbar-nav me-auto ps-lg-0" style="padding-left: 0.15rem">
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= Url::to(['artigo/all-artigos'])   ?>">Produtos</a>
+                        </li>
+
+
                         <!-- Navbar dropdown -->
                         <li class="nav-item dropdown dropdown-hover position-static">
                             <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#" id="navbarDropdown"

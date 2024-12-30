@@ -31,9 +31,12 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'precoFinal')->textInput() ?>
 
-    <?= $form->field($model, 'marca_id')->textInput() ?>
+    <?= $form->field($model, 'marca_id')->dropDownList(
+        \yii\helpers\ArrayHelper::map(\common\models\Marca::find()->all(), 'id', 'nome'),
+        ['prompt' => 'Selecione a marca']
+    ) ?>
 
-    <?= $form->field($model, 'imagem')->textInput() ?> <!-- Campo de upload de imagem -->
+    <?= $form->field($model, 'imagem')->fileInput() ?>
 
 
     <div class="form-group">

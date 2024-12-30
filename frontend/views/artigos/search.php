@@ -37,7 +37,7 @@ $this->title = 'Resultados da Pesquisa: ' . Html::encode($query);
                         <div class="col-lg-8 col-xl5 col-sm-4"> <!-- Ajustei os tamanhos das colunas -->                            <div class="filter-container p-0 row">
                                 <?php foreach ($artigos as $artigo): ?>
                                     <?php
-                                    $imagemSrc = 'http://localhost/Loja-de-Informatica/frontend/web/imagens/materiais/' . $artigo->imagem;
+                                    $imagemSrc = Yii::getAlias('@web') . '/imagens/materiais/' . $artigo->imagem;
                                     ?>
                                     <div class="col-md-4 mb-4 filtr-item" data-categoria_id="<?= $artigo->categoria_id ?>">
                                         <a href="<?= Yii::$app->urlManager->createUrl(['artigos/artigos-view', 'Id' => $artigo->Id]) ?>" style="text-decoration: none; color: inherit;">

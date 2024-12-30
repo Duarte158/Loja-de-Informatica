@@ -16,9 +16,7 @@ $this->title = 'Página Inicial';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Loja</title>
 
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
 </head>
 <style>
     .card-banner img {
@@ -50,7 +48,7 @@ $this->title = 'Página Inicial';
                      ">
                     <div style="max-width: 500px; text-align: center;">
                         <?php
-                        $imagemSrc = 'http://localhost/LojaDeInformatica/frontend/web/imagens/materiais/banner.png';
+                        $imagemSrc = 'http://localhost/Loja-de-Informatica/frontend/web/imagens/materiais/banner.png';
                         ?>
                         <img src="<?= $imagemSrc ?>" alt="Banner" style="max-width: 100%; height: auto; border-radius: 8px;" />
                     </div>
@@ -92,22 +90,47 @@ $this->title = 'Página Inicial';
         <div class="row">
             <?php foreach ($destaques as $destaque): ?>
                 <?php
-                $imagemSrc = 'http://localhost/LojaDeInformatica/frontend/web/imagens/materiais/' . $destaque->imagem;
+                $imagemSrc = Yii::getAlias('@web') . '/imagens/materiais/' . $destaque->imagem;
                 ?>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card my-2 shadow-0">
-                        <a href="<?= \yii\helpers\Url::to(['artigos/artigos-view', 'Id' => $destaque->Id]) ?>" class="">
-                            <img src="<?= $imagemSrc ?>" class="card-img-top rounded-2" style="aspect-ratio: 1 / 1"/>
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card my-2 shadow-sm border" style="width: 18rem; border-radius: 8px; overflow: hidden;">
+                        <a href="<?= Yii::$app->urlManager->createUrl(['artigos/artigos-view', 'Id' => $destaque->Id]) ?>" style="text-decoration: none; color: inherit;">
+                            <!-- Imagem do produto -->
+                            <img src="<?= $imagemSrc ?>" class="card-img-top" alt="<?= $destaque->nome ?>" />
                         </a>
-                        <div class="card-body p-0 pt-3">
-                            <a href="#!" class="btn btn-light border px-2 pt-2 float-end icon-hover">
-                                <i class="fas fa-heart fa-lg px-1 text-secondary"></i>
-                            </a>
-                            <h5 class="card-title">$<?= number_format($destaque->precoFinal, 2) ?></h5>
-                            <p class="card-text mb-0"><?= htmlspecialchars($destaque->nome) ?></p>
-                            <p class="text-muted">
+                        <div class="card-body">
+                            <!-- Botão para adicionar aos favoritos -->
+                            <?= Html::beginForm(['wishlist/add'], 'post') ?>
+                            <?= Html::hiddenInput('id', $destaque->Id) ?>
+                            <?= Html::submitButton('<i class="fas fa-heart fa-lg px-1 text-secondary"></i>', [
+                                'class' => 'btn btn-light border px-2 pt-2 float-end icon-hover'
+                            ]) ?>
+                            <?= Html::endForm() ?>
 
+
+                            <p class="card-text">
+                                <?= Html::encode($destaque->nome) ?>
                             </p>
+
+                            <!-- Informações do produto -->
+                            <h5 class="preco-bold" >
+                                <?= Html::encode(number_format($destaque->precoFinal, 2)) ?> € / <?= Html::encode($destaque->unidade->descricao) ?>
+                            </h5>
+
+
+                            <!-- Botão "Adicionar ao Carrinho" -->
+                            <?= Html::beginForm(['artigos/adicionar-carrinho'], 'post') ?>
+                            <?= Html::hiddenInput('id', $destaque->Id) ?>
+                            <?= Html::hiddenInput('quantidade' , 1) ?>
+
+
+
+
+                            <?= Html::submitButton('ADICIONAR', [
+                                'class' => 'btn btn-primary btn-block mt-2',
+                                'style' => 'text-transform: uppercase; font-weight: bold; padding: 10px;'
+                            ]) ?>
+                            <?= Html::endForm() ?>
                         </div>
                     </div>
                 </div>

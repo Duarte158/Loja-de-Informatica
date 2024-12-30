@@ -7,6 +7,7 @@ use common\models\Artigos;
 use common\models\Carrinhocompras;
 use common\models\Categoria;
 use common\models\LinhaCarrinho;
+use common\models\Marca;
 use Yii;
 use yii\web\NotFoundHttpException;
 
@@ -15,14 +16,42 @@ class ArtigosController extends \yii\web\Controller
 
     public function actionArtigos($id)
     {
+        // Obtém a categoria selecionada
         $categoria = Categoria::findOne($id);
-        $artigos = Artigos::find()->where(['categoria_id' => $id])->all();
+
+        // Verifica se a categoria existe
+        if (!$categoria) {
+            throw new \yii\web\NotFoundHttpException("Categoria não encontrada.");
+        }
+
+        // Obtém o ID da marca selecionada para filtrar (se houver)
+        $marcaId = Yii::$app->request->get('marca');
+
+        // Consulta de artigos: Filtra por categoria e, se aplicável, por marca
+        $query = Artigos::find()->where(['categoria_id' => $id]);
+
+        if ($marcaId) {
+            $query->andWhere(['marca_id' => $marcaId]);
+        }
+
+        $artigos = $query->all();
+
+        // Consulta para obter as marcas na categoria e contar seus artigos
+        $marcas = Marca::find()
+            ->select(['marca.*', 'COUNT(artigos.Id) AS artigos_count'])
+            ->joinWith('artigos') // Certifique-se de que a relação `artigos` está definida no modelo Marca
+            ->where(['artigos.categoria_id' => $id])
+            ->groupBy('marca.Id')
+            ->all();
 
         return $this->render('artigos', [
             'categoria' => $categoria,
             'artigos' => $artigos,
+            'marcas' => $marcas,
+            'marcaSelecionada' => $marcaId, // Passa a marca selecionada para o view (opcional)
         ]);
     }
+
 
     public function actionPesquisar()
     {

@@ -5,24 +5,21 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "marca".
+ * This is the model class for table "unidade".
  *
  * @property int $id
- * @property string $nome
+ * @property string|null $descricao
  *
  * @property Artigos[] $artigos
  */
-class Marca extends \yii\db\ActiveRecord
+class Unidade extends \yii\db\ActiveRecord
 {
-
-    public $artigos_count; // Propriedade pública para armazenar o número de artigos
-
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'marca';
+        return 'unidade';
     }
 
     /**
@@ -31,8 +28,7 @@ class Marca extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nome'], 'required'],
-            [['nome'], 'string', 'max' => 45],
+            [['descricao'], 'string', 'max' => 45],
         ];
     }
 
@@ -43,7 +39,7 @@ class Marca extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'nome' => 'Nome',
+            'descricao' => 'Descricao',
         ];
     }
 
@@ -54,6 +50,6 @@ class Marca extends \yii\db\ActiveRecord
      */
     public function getArtigos()
     {
-        return $this->hasMany(Artigos::class, ['marca_id' => 'id']);
+        return $this->hasMany(Artigos::class, ['unidade_id' => 'id']);
     }
 }
