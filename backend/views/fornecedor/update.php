@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var common\models\fornecedor $model */
+/** @var \backend\models\fornecedor $model */
 
 $this->title = 'Update Fornecedor: ' . $model->ID;
 $this->params['breadcrumbs'][] = ['label' => 'Fornecedors', 'url' => ['index']];

@@ -75,7 +75,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     <p>
                         <?= $model->descricao ?>
                     </p>
-
+                    <p>
+                       Stock:  <?= $model->stock ?>
+                    </p>
 
                     <hr />
 

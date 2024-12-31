@@ -2,15 +2,16 @@
 
 namespace backend\controllers;
 
-use backend\models\fornecedor;
+use backend\models\LinhaFaturaFornecedor;
 use yii\data\ActiveDataProvider;
-use yii\filters\VerbFilter;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 
 /**
- * FornecedorController implements the CRUD actions for fornecedor model.
+ * LinhaFaturaFornecedorController implements the CRUD actions for LinhaFaturaFornecedor model.
  */
-class FornecedorController extends SiteController
+class LinhaFaturaFornecedorController extends Controller
 {
     /**
      * @inheritDoc
@@ -31,21 +32,21 @@ class FornecedorController extends SiteController
     }
 
     /**
-     * Lists all fornecedor models.
+     * Lists all LinhaFaturaFornecedor models.
      *
      * @return string
      */
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => fornecedor::find(),
+            'query' => LinhaFaturaFornecedor::find(),
             /*
             'pagination' => [
                 'pageSize' => 50
             ],
             'sort' => [
                 'defaultOrder' => [
-                    'ID' => SORT_DESC,
+                    'id' => SORT_DESC,
                 ]
             ],
             */
@@ -57,30 +58,30 @@ class FornecedorController extends SiteController
     }
 
     /**
-     * Displays a single fornecedor model.
-     * @param int $ID ID
+     * Displays a single LinhaFaturaFornecedor model.
+     * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($ID)
+    public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($ID),
+            'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new fornecedor model.
+     * Creates a new LinhaFaturaFornecedor model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new fornecedor();
+        $model = new LinhaFaturaFornecedor();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -92,18 +93,18 @@ class FornecedorController extends SiteController
     }
 
     /**
-     * Updates an existing fornecedor model.
+     * Updates an existing LinhaFaturaFornecedor model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $ID ID
+     * @param int $id ID
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($ID)
+    public function actionUpdate($id)
     {
-        $model = $this->findModel($ID);
+        $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'ID' => $model->ID]);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -112,29 +113,29 @@ class FornecedorController extends SiteController
     }
 
     /**
-     * Deletes an existing fornecedor model.
+     * Deletes an existing LinhaFaturaFornecedor model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $ID ID
+     * @param int $id ID
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($ID)
+    public function actionDelete($id)
     {
-        $this->findModel($ID)->delete();
+        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the fornecedor model based on its primary key value.
+     * Finds the LinhaFaturaFornecedor model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $ID ID
-     * @return fornecedor the loaded model
+     * @param int $id ID
+     * @return LinhaFaturaFornecedor the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($ID)
+    protected function findModel($id)
     {
-        if (($model = fornecedor::findOne(['ID' => $ID])) !== null) {
+        if (($model = LinhaFaturaFornecedor::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

@@ -47,20 +47,24 @@ $this->title = $categoria->descricao;
                 </div>
 
                 <!-- Listagem de artigos -->
-                <div class="col-md-9">
-                    <h3>Categoria: <?= Html::encode($categoria->descricao) ?></h3>
-                    <div class="row">
+                <div class="col-lg-8 col-xl5 col-sm-4"> <!-- Ajustei os tamanhos das colunas -->
+                    <div class="filter-container p-0 row">
                         <?php if (!empty($artigos)): ?>
                             <?php foreach ($artigos as $artigo): ?>
-                                <div class="col-md-4 mb-4">
-                                    <div class="card">
-                                        <img src="<?= Yii::getAlias('@web') . '/imagens/materiais/' . $artigo->imagem ?>" class="card-img-top" alt="<?= Html::encode($artigo->nome) ?>">
-                                        <div class="card-body">
-                                            <h5 class="card-title"><?= Html::encode($artigo->nome) ?></h5>
-                                            <p class="card-text">Preço: <?= Html::encode(number_format($artigo->precoFinal, 2)) ?> €</p>
-                                            <a href="<?= Yii::$app->urlManager->createUrl(['artigos/artigos-view', 'Id' => $artigo->Id]) ?>" class="btn btn-primary">Ver Detalhes</a>
+                                <?php
+                                $imagemSrc = Yii::getAlias('@web') . '/imagens/materiais/' . $artigo->imagem;
+                                ?>
+                                <div class="col-md-4 mb-4 filtr-item" data-categoria_id="<?= $artigo->categoria_id ?>">
+                                    <a href="<?= Yii::$app->urlManager->createUrl(['artigos/artigos-view', 'Id' => $artigo->Id]) ?>" style="text-decoration: none; color: inherit;">
+                                        <div class="card h-100 d-flex flex-column justify-content-between">
+                                            <img src="<?= $imagemSrc ?>" class="card-img-top" alt="<?= Html::encode($artigo->nome) ?>" style="height: 200px; object-fit: cover;">
+                                            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                                <h5 class="card-title text-center"><?= Html::encode($artigo->nome) ?></h5>
+                                                <span class="card-text text-center">Preço: <?= Html::encode(number_format($artigo->precoFinal, 2)) ?> €</span>
+                                                <a href="<?= Yii::$app->urlManager->createUrl(['artigos/artigos-view', 'Id' => $artigo->Id]) ?>" class="btn btn-primary mt-2">Ver Detalhes</a>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 </div>
                             <?php endforeach; ?>
                         <?php else: ?>
@@ -68,6 +72,7 @@ $this->title = $categoria->descricao;
                         <?php endif; ?>
                     </div>
                 </div>
+
             </div>
 
         </div>
