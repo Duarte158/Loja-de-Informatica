@@ -79,25 +79,34 @@ class ComprasController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
+
     public function actionCreate()
     {
-        // Instância do modelo para a fatura
         $model = new Compras();
-
-        // Criação de várias linhas de fatura
         $linhasFatura = [new Linhafaturafornecedor()];
 
-        if ($model->load(\Yii::$app->request->post())) {
-            $linhasFatura = Model::createMultiple(Linhafaturafornecedor::classname());
-            Model::loadMultiple($linhasFatura, \Yii::$app->request->post());
+        // Carregar fornecedores e artigos do banco de dados
+        $fornecedores = Fornecedor::find()
+            ->select(['designacaoSocial', 'ID']) // Seleciona o nome e o ID
+            ->indexBy('ID') // Usa o ID como índice
+            ->column(); // Cria um array (id => nome)
 
-            // Validações
+        $artigos = Artigos::find()
+            ->select(['nome', 'Id']) // Seleciona o nome e o ID
+            ->indexBy('Id') // Usa o ID como índice
+            ->column(); // Cria um array (id => nome)
+
+        // Se o formulário foi submetido
+        if ($model->load(\Yii::$app->request->post()) && Model::loadMultiple($linhasFatura, \Yii::$app->request->post())) {
+            // Validar todos os dados
             $isValid = $model->validate();
             $isValid = Model::validateMultiple($linhasFatura) && $isValid;
 
             if ($isValid) {
+                // Iniciar uma transação
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
+                    // Salvar o modelo principal (fatura)
                     if ($model->save(false)) {
                         foreach ($linhasFatura as $linha) {
                             $linha->fatura_fornecedor_id = $model->id; // Associa a linha à fatura
@@ -106,10 +115,10 @@ class ComprasController extends Controller
                                 break;
                             }
 
-                            // Atualizar o stock do artigo
+                            // Atualizar o estoque do artigo
                             $artigo = Artigos::findOne($linha->artigo_id);
                             if ($artigo) {
-                                $artigo->stock += $linha->quantidade; // Atualiza o stock
+                                $artigo->stock -= $linha->quantidade; // Atualiza o estoque
                                 $artigo->save(false);
                             }
                         }
@@ -123,11 +132,21 @@ class ComprasController extends Controller
             }
         }
 
+        $total = 0;
+        foreach ($linhasFatura as $linha) {
+            $total += $linha->quantidade * $linha->valor;
+        }
+
+// Passar os totais para a view
         return $this->render('create', [
             'model' => $model,
             'linhasFatura' => $linhasFatura,
+            'fornecedores' => $fornecedores,
+            'artigos' => $artigos,
+            'total' => $total, // Passando o total para a view
         ]);
     }
+
 
 
 
