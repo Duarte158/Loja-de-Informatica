@@ -39,7 +39,7 @@ use yii\bootstrap5\Html;
                                                 <strong>Nome:</strong>
                                             </div>
                                             <div class="col-sm-8">
-                                                <?= $model->profile !== null ? Html::encode($model->profile->nome) : 'N/A' ?>
+                                                <?= $model->profile !== null ? Html::encode($model->profile->name) : 'N/A' ?>
                                             </div>
                                         </div>
                                         <hr>
@@ -57,7 +57,7 @@ use yii\bootstrap5\Html;
                                                 <strong>Morada:</strong>
                                             </div>
                                             <div class="col-sm-8">
-                                                <?= $model->profile !== null ? Html::encode($model->profile->morada) : 'N/A' ?>
+                                                <?= $model->profile !== null ? Html::encode($model->profile->address) : 'N/A' ?>
                                             </div>
                                         </div>
                                         <hr>
@@ -75,7 +75,7 @@ use yii\bootstrap5\Html;
                                                 <strong>Codigo Postal:</strong>
                                             </div>
                                             <div class="col-sm-8">
-                                                <?= $model->profile !== null ? Html::encode($model->profile->codPostal) : 'N/A' ?>
+                                                <?= $model->profile !== null ? Html::encode($model->profile->codpostal) : 'N/A' ?>
                                             </div>
                                         </div>
                                         <hr>
@@ -84,7 +84,7 @@ use yii\bootstrap5\Html;
                                                 <strong>Contacto:</strong>
                                             </div>
                                             <div class="col-sm-8">
-                                                <?= $model->profile !== null ? Html::encode($model->profile->contacto) : 'N/A' ?>
+                                                <?= $model->profile !== null ? Html::encode($model->profile->contact) : 'N/A' ?>
                                             </div>
                                         </div>
                                         <hr>

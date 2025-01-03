@@ -90,7 +90,7 @@ class ArtigosController extends SiteController
                 // Carregar e salvar a imagem
                 $imagem = UploadedFile::getInstance($model, 'imagem');
                 if ($imagem) {
-                    $imagePath = 'C:\wamp64\www\Loja-de-Informatica\frontend\web\imagens\materiais\\' . $imagem->name;
+                    $imagePath = 'C:\wamp64\www\LojaDeInformatica\frontend\web\imagens\materiais\\' . $imagem->name;
                     $imagem->saveAs($imagePath);
                     $model->imagem = $imagem->name;
                 }
