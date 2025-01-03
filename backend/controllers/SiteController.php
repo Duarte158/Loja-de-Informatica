@@ -71,17 +71,19 @@ class SiteController extends Controller
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
+            // Se o usuário já está logado, redirecione para a página inicial
+            return $this->redirect(['site/index']);
         }
 
         $this->layout = 'blank';
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            // Após login bem-sucedido, redirecione para a página inicial
+            return $this->redirect(['site/index']);
         }
 
-        $model->password = '';
+        $model->password = ''; // Limpa a senha no formulário por segurança
 
         return $this->render('login', [
             'model' => $model,
@@ -96,7 +98,6 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
-
-        return $this->goHome();
+        return $this->redirect(['site/login']); // Use um array para indicar a rota
     }
 }
