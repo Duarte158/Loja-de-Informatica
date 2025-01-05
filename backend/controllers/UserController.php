@@ -40,12 +40,29 @@ class UserController extends SiteController
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => User::find(),
+        $query = User::find();
+
+        // Obter o parâmetro role da requisição
+        $role = \Yii::$app->request->get('role');
+
+        if ($role) {
+            $auth = \Yii::$app->authManager;
+            $userIds = $auth->getUserIdsByRole($role); // Obter IDs dos usuários com a role
+            $query->andWhere(['id' => $userIds]);
+        }
+
+        $dataProvider = new \yii\data\ActiveDataProvider([
+            'query' => $query,
         ]);
+
+        // Obter lista de roles
+        $auth = \Yii::$app->authManager;
+        $roles = \yii\helpers\ArrayHelper::map($auth->getRoles(), 'name', 'description');
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'roles' => $roles,
+            'selectedRole' => $role, // Role selecionada
         ]);
     }
 

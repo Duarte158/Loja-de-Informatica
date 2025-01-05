@@ -6,7 +6,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\Artigos;
 
-class ArtigosSearch extends Artigos\
+class ArtigosSearch extends Artigos
 {
     public function rules()
     {

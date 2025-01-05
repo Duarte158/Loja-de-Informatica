@@ -8,14 +8,13 @@ use Yii;
  * This is the model class for table "compras".
  *
  * @property int $id
- * @property string $data
- * @property float $valorTotal
- * @property int $estado
- * @property int $fornecedores_id
- * @property int $numero
+ * @property string|null $data
+ * @property float|null $valorTotal
+ * @property string|null $estado
+ * @property int|null $fornecedores_id
+ * @property int|null $numero
  *
  * @property Fornecedor $fornecedores
-
  * @property Linhafaturafornecedor[] $linhafaturafornecedors
  */
 class Compras extends \yii\db\ActiveRecord
@@ -34,10 +33,10 @@ class Compras extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'estado', 'fornecedores_id', 'numero'], 'integer'],
             [['data'], 'safe'],
             [['valorTotal'], 'number'],
-            [['id'], 'unique'],
+            [['estado'], 'string'],
+            [['fornecedores_id', 'numero'], 'integer'],
             [['fornecedores_id'], 'exist', 'skipOnError' => true, 'targetClass' => Fornecedor::class, 'targetAttribute' => ['fornecedores_id' => 'ID']],
         ];
     }
@@ -65,16 +64,6 @@ class Compras extends \yii\db\ActiveRecord
     public function getFornecedores()
     {
         return $this->hasOne(Fornecedor::class, ['ID' => 'fornecedores_id']);
-    }
-
-    /**
-     * Gets query for [[Linhacompras]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getLinhacompras()
-    {
-        return $this->hasMany(Linhacompras::class, ['compra_id' => 'id']);
     }
 
     /**

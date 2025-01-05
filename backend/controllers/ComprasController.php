@@ -83,6 +83,9 @@ class ComprasController extends Controller
         // Define a data atual
         $model->data = date('Y-m-d'); // Ajuste o formato conforme necessário
 
+        // Define o estado inicial como 'Em Lançamento'
+        $model->estado = 'Em Lançamento';
+
         // Salva o modelo automaticamente assim que a ação é chamada
         if ($model->save()) {
             // Redireciona para a página de visualização do registro recém-criado
@@ -94,6 +97,8 @@ class ComprasController extends Controller
             'model' => $model,
         ]);
     }
+
+
 
 
     public function actionFormulario($id)
