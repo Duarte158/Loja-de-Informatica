@@ -18,6 +18,18 @@ return [
         ],
         ],
     'components' => [
+        'as access' => [
+            'class' => \yii\filters\AccessControl::class,
+            'rules' => [
+                [
+                    'allow' => true,
+                    'roles' => ['admin', 'funcionario'], // Apenas admin e funcionário têm acesso ao backend
+                ],
+            ],
+            'denyCallback' => function () {
+                return Yii::$app->response->redirect(['site/login']); // Redireciona para o login em caso de negação
+            },
+        ],
         'request' => [
             'csrfParam' => '_csrf-backend',
         ],

@@ -40,18 +40,18 @@ use yii\helpers\Html;
                     ['label' => 'Gii',  'icon' => 'file-code', 'url' => ['/gii'], 'target' => '_blank'],
 
                     ['label' => 'Zona Cliente', 'header' => true],
-                    ['label' => 'Users','icon' => 'user', 'url' => (['user/index'])],
+                    ['label' => 'Users', 'icon' => 'user', 'url' => ['user/index'], 'visible' => Yii::$app->user->can('cliente') || Yii::$app->user->can('admin')],
 
-                    ['label' => 'Zona Funcionário', 'header' => true],
-                    ['label' => 'Funcionários','icon' => 'user', 'url' => ['funcionario/index']],
+                    ['label' => 'Zona Funcionário', 'header' => true, 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
+                    ['label' => 'Funcionários', 'icon' => 'user', 'url' => ['funcionario/index'], 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
 
                     ['label' => 'Zona Artigos', 'header' => true],
-                    ['label' => 'Artigos','icon' => 'fas fa-boxes', 'url' => ['artigos/index']],
-                    ['label' => 'Categorias','icon' => 'fas fa-plus', 'url' => ['categoria/index']],
-                    ['label' => 'Iva','icon' => 'fas fa-plus', 'url' => ['iva/index']],
+                    ['label' => 'Artigos', 'icon' => 'fas fa-boxes', 'url' => ['artigos/index'], 'visible' => Yii::$app->user->can('admin') || Yii::$app->user->can('funcionario')],
+                    ['label' => 'Categorias', 'icon' => 'fas fa-plus', 'url' => ['categoria/index'], 'visible' => Yii::$app->user->can('admin')],
+                    ['label' => 'Iva', 'icon' => 'fas fa-plus', 'url' => ['iva/index'], 'visible' => Yii::$app->user->can('admin')],
 
-                    ['label' => 'Zona Fornecedor', 'header' => true],
-                    ['label' => 'Fornecedores','icon' => 'user', 'url' => ['fornecedor/index']],
+                    ['label' => 'Zona Fornecedor', 'header' => true, 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
+                    ['label' => 'Fornecedores', 'icon' => 'user', 'url' => ['fornecedor/index'], 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
 
                     // Botão de logout
                     ['label' => 'Logout', 'url' => ['site/logout'], 'icon' => 'sign-out-alt', 'template' => '<a href="{url}" data-method="post">{icon} {label}</a>'],
