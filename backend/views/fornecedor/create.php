@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var \backend\models\fornecedor $model */
+/** @var backend\models\Fornecedor $model */
 
 $this->title = 'Create Fornecedor';
 $this->params['breadcrumbs'][] = ['label' => 'Fornecedors', 'url' => ['index']];

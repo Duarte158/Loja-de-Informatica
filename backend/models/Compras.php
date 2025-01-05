@@ -34,7 +34,6 @@ class Compras extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'data', 'valorTotal', 'estado', 'fornecedores_id', 'numero'], 'required'],
             [['id', 'estado', 'fornecedores_id', 'numero'], 'integer'],
             [['data'], 'safe'],
             [['valorTotal'], 'number'],

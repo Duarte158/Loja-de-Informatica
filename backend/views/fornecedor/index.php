@@ -1,12 +1,13 @@
 <?php
 
-use backend\models\fornecedor;
-use yii\grid\ActionColumn;
-use yii\grid\GridView;
+use backend\models\Fornecedor;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\grid\ActionColumn;
+use yii\grid\GridView;
 
 /** @var yii\web\View $this */
+/** @var backend\controllers\FornecedorSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Fornecedors';
@@ -20,9 +21,11 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Fornecedor', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
@@ -34,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'capitalSocial',
             [
                 'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, fornecedor $model, $key, $index, $column) {
+                'urlCreator' => function ($action, Fornecedor $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'ID' => $model->ID]);
                  }
             ],

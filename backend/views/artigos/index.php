@@ -7,6 +7,7 @@ use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
+/** @var backend\controllers\ArtigoSeach $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Artigos';
@@ -20,21 +21,27 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Artigos', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'referencia',
+            'Id',
             'nome',
-        //   'descricao',
-            'precoFinal',
+            'descricao',
+            'precoUni',
             'stock',
             //'categoria_id',
             //'iva_id',
             //'destaque',
+            //'referencia',
             //'imagem',
+            //'precoFinal',
+            //'marca_id',
+            //'unidade_id',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Artigos $model, $key, $index, $column) {

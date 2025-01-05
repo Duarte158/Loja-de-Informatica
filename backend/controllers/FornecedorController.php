@@ -2,15 +2,16 @@
 
 namespace backend\controllers;
 
-use backend\models\fornecedor;
-use yii\data\ActiveDataProvider;
-use yii\filters\VerbFilter;
+use backend\models\Fornecedor;
+use backend\controllers\FornecedorSearch;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 
 /**
- * FornecedorController implements the CRUD actions for fornecedor model.
+ * FornecedorController implements the CRUD actions for Fornecedor model.
  */
-class FornecedorController extends SiteController
+class FornecedorController extends Controller
 {
     /**
      * @inheritDoc
@@ -31,33 +32,23 @@ class FornecedorController extends SiteController
     }
 
     /**
-     * Lists all fornecedor models.
+     * Lists all Fornecedor models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => fornecedor::find(),
-            /*
-            'pagination' => [
-                'pageSize' => 50
-            ],
-            'sort' => [
-                'defaultOrder' => [
-                    'ID' => SORT_DESC,
-                ]
-            ],
-            */
-        ]);
+        $searchModel = new FornecedorSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single fornecedor model.
+     * Displays a single Fornecedor model.
      * @param int $ID ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -70,13 +61,13 @@ class FornecedorController extends SiteController
     }
 
     /**
-     * Creates a new fornecedor model.
+     * Creates a new Fornecedor model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new fornecedor();
+        $model = new Fornecedor();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -92,7 +83,7 @@ class FornecedorController extends SiteController
     }
 
     /**
-     * Updates an existing fornecedor model.
+     * Updates an existing Fornecedor model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $ID ID
      * @return string|\yii\web\Response
@@ -112,7 +103,7 @@ class FornecedorController extends SiteController
     }
 
     /**
-     * Deletes an existing fornecedor model.
+     * Deletes an existing Fornecedor model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $ID ID
      * @return \yii\web\Response
@@ -126,15 +117,15 @@ class FornecedorController extends SiteController
     }
 
     /**
-     * Finds the fornecedor model based on its primary key value.
+     * Finds the Fornecedor model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $ID ID
-     * @return fornecedor the loaded model
+     * @return Fornecedor the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($ID)
     {
-        if (($model = fornecedor::findOne(['ID' => $ID])) !== null) {
+        if (($model = Fornecedor::findOne(['ID' => $ID])) !== null) {
             return $model;
         }
 
