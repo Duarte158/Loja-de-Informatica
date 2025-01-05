@@ -28,16 +28,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'referencia')->textInput() ?>
 
+    <?= $form->field($model, 'imagem')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'precoFinal')->textInput() ?>
 
-    <?= $form->field($model, 'marca_id')->dropDownList(
-        \yii\helpers\ArrayHelper::map(\common\models\Marca::find()->all(), 'id', 'nome'),
-        ['prompt' => 'Selecione a marca']
-    ) ?>
+    <?= $form->field($model, 'marca_id')->textInput() ?>
 
-    <?= $form->field($model, 'imagem')->fileInput() ?>
-
+    <?= $form->field($model, 'unidade_id')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

@@ -3,16 +3,15 @@
 namespace backend\controllers;
 
 use common\models\Artigos;
-use yii\data\ActiveDataProvider;
+use backend\controllers\ArtigoSeach;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
 
 /**
  * ArtigosController implements the CRUD actions for Artigos model.
  */
-class ArtigosController extends SiteController
+class ArtigosController extends Controller
 {
     /**
      * @inheritDoc
@@ -39,21 +38,11 @@ class ArtigosController extends SiteController
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Artigos::find(),
-            /*
-            'pagination' => [
-                'pageSize' => 50
-            ],
-            'sort' => [
-                'defaultOrder' => [
-                    'Id' => SORT_DESC,
-                ]
-            ],
-            */
-        ]);
+        $searchModel = new ArtigoSeach();
+        $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -81,24 +70,8 @@ class ArtigosController extends SiteController
         $model = new Artigos();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->validate()) {
-
-                // Calcular o precoFinal
-                $ivaPercentage = $model->iva->percentagem; // Certifique-se de que o valor do iva_id seja o percentual
-                $model->precoFinal = round($model->precoUni * (1 + $ivaPercentage / 100), 2); // Arredondar para 2 casas decimais
-                $model->stock = 0;
-                // Carregar e salvar a imagem
-                $imagem = UploadedFile::getInstance($model, 'imagem');
-                if ($imagem) {
-                    $imagePath = 'C:\wamp64\www\LojaDeInformatica\frontend\web\imagens\materiais\\' . $imagem->name;
-                    $imagem->saveAs($imagePath);
-                    $model->imagem = $imagem->name;
-                }
-
-                // Salvar o modelo com precoFinal e imagem
-                if ($model->save(false)) {
-                    return $this->redirect(['view', 'Id' => $model->Id]);
-                }
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'Id' => $model->Id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -121,15 +94,6 @@ class ArtigosController extends SiteController
         $model = $this->findModel($Id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-
-
-            $imagem = UploadedFile::getInstance($model , 'imagem');
-            $imagem->saveAs('C:\wamp64\www\Loja-de-Informatica\frontend\web\imagens\materiais\\' . $imagem->name);
-            $model->imagem = $imagem->name;
-            $model->save();
-
-
-
             return $this->redirect(['view', 'Id' => $model->Id]);
         }
 
@@ -137,6 +101,7 @@ class ArtigosController extends SiteController
             'model' => $model,
         ]);
     }
+
     /**
      * Deletes an existing Artigos model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

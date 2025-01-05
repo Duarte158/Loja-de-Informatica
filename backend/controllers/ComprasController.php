@@ -4,9 +4,6 @@ namespace backend\controllers;
 
 use backend\models\Compras;
 use backend\models\Fornecedor;
-use backend\models\Linhafaturafornecedor;
-use common\models\Artigos;
-use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -79,76 +76,94 @@ class ComprasController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-
     public function actionCreate()
     {
         $model = new Compras();
-        $linhasFatura = [new Linhafaturafornecedor()];
 
-        // Carregar fornecedores e artigos do banco de dados
-        $fornecedores = Fornecedor::find()
-            ->select(['designacaoSocial', 'ID']) // Seleciona o nome e o ID
-            ->indexBy('ID') // Usa o ID como índice
-            ->column(); // Cria um array (id => nome)
+        // Define a data atual
+        $model->data = date('Y-m-d'); // Ajuste o formato conforme necessário
 
-        $artigos = Artigos::find()
-            ->select(['nome', 'Id']) // Seleciona o nome e o ID
-            ->indexBy('Id') // Usa o ID como índice
-            ->column(); // Cria um array (id => nome)
-
-        // Se o formulário foi submetido
-        if ($model->load(\Yii::$app->request->post()) && Model::loadMultiple($linhasFatura, \Yii::$app->request->post())) {
-            // Validar todos os dados
-            $isValid = $model->validate();
-            $isValid = Model::validateMultiple($linhasFatura) && $isValid;
-
-            if ($isValid) {
-                // Iniciar uma transação
-                $transaction = \Yii::$app->db->beginTransaction();
-                try {
-                    // Salvar o modelo principal (fatura)
-                    if ($model->save(false)) {
-                        foreach ($linhasFatura as $linha) {
-                            $linha->fatura_fornecedor_id = $model->id; // Associa a linha à fatura
-                            if (!$linha->save(false)) {
-                                $transaction->rollBack();
-                                break;
-                            }
-
-                            // Atualizar o estoque do artigo
-                            $artigo = Artigos::findOne($linha->artigo_id);
-                            if ($artigo) {
-                                $artigo->stock -= $linha->quantidade; // Atualiza o estoque
-                                $artigo->save(false);
-                            }
-                        }
-                    }
-                    $transaction->commit();
-                    return $this->redirect(['view', 'id' => $model->id]);
-                } catch (\Exception $e) {
-                    $transaction->rollBack();
-                    throw $e;
-                }
-            }
+        // Salva o modelo automaticamente assim que a ação é chamada
+        if ($model->save()) {
+            // Redireciona para a página de visualização do registro recém-criado
+            return $this->redirect(['formulario', 'id' => $model->id]);
         }
 
-        $total = 0;
-        foreach ($linhasFatura as $linha) {
-            $total += $linha->quantidade * $linha->valor;
-        }
-
-// Passar os totais para a view
+        // Caso o salvamento falhe (por exemplo, erro de validação), renderiza o formulário
         return $this->render('create', [
             'model' => $model,
-            'linhasFatura' => $linhasFatura,
-            'fornecedores' => $fornecedores,
-            'artigos' => $artigos,
-            'total' => $total, // Passando o total para a view
         ]);
     }
 
 
+    public function actionFormulario($id)
+    {
+        $model = Compras::findOne($id);
 
+        if (!$model) {
+            throw new NotFoundHttpException('A compra solicitada não foi encontrada.');
+        }
+
+        // Verificar se há um fornecedor pesquisado
+        $fornecedores = [];
+        if ($this->request->get('fornecedores_id')) {
+            $fornecedores = Fornecedor::find()
+                ->where(['id' => $this->request->get('fornecedores_id')])
+                ->all();
+        }
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $fornecedorId = $this->request->post('fornecedores_id');
+            if ($fornecedorId) {
+                $model->fornecedores_id = $fornecedorId;
+            }
+
+            if ($model->save()) {
+                return $this->redirect(['compras/formulario', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('formulario', [
+            'model' => $model,
+            'fornecedores' => $fornecedores, // Passando os fornecedores encontrados
+        ]);
+    }
+
+
+    public function actionSearch($id)
+    {
+        // Verifica se o ID foi passado corretamente
+        if (!$id) {
+            throw new NotFoundHttpException('ID da compra não encontrado.');
+        }
+
+        // Busca todos os fornecedores
+        $fornecedores = Fornecedor::find()->all();
+        $model = Compras::findOne($id);
+
+        if (!$model) {
+            throw new NotFoundHttpException('A compra solicitada não foi encontrada.');
+        }
+
+        return $this->render('searchFornecedor', [
+            'fornecedores' => $fornecedores,
+            'model' => $model,
+        ]);
+    }
+
+
+    public function actionSelect($id, $fornecedor_id)
+    {
+        // Associa o fornecedor à compra
+        $model = Compras::findOne($id);
+        if ($model) {
+            $model->fornecedores_id = $fornecedor_id;
+            $model->save();
+        }
+
+        // Redireciona de volta para a edição da compra
+        return $this->redirect(['compras/formulario', 'id' => $id]);
+    }
 
     /**
      * Updates an existing Compras model.
