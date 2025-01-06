@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\controllers\SiteController;
+use backend\models\UserSearch;
 use common\models\Profile;
 use common\models\User;
 use yii\data\ActiveDataProvider;
@@ -39,32 +40,30 @@ class UserController extends SiteController
      * @return string
      */
     public function actionIndex()
-    {
-        $query = User::find();
+{
+    $searchModel = new UserSearch();
+    $dataProvider = $searchModel->search(\Yii::$app->request->queryParams);
 
-        // Obter o parâmetro role da requisição
-        $role = \Yii::$app->request->get('role');
+    // Obter o parâmetro role da requisição
+    $role = \Yii::$app->request->get('role');
 
-        if ($role) {
-            $auth = \Yii::$app->authManager;
-            $userIds = $auth->getUserIdsByRole($role); // Obter IDs dos usuários com a role
-            $query->andWhere(['id' => $userIds]);
-        }
-
-        $dataProvider = new \yii\data\ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        // Obter lista de roles
+    if ($role) {
         $auth = \Yii::$app->authManager;
-        $roles = \yii\helpers\ArrayHelper::map($auth->getRoles(), 'name', 'description');
-
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-            'roles' => $roles,
-            'selectedRole' => $role, // Role selecionada
-        ]);
+        $userIds = $auth->getUserIdsByRole($role); // Obter IDs dos usuários com a role
+        $dataProvider->query->andWhere(['id' => $userIds]);
     }
+
+    // Obter lista de roles
+    $auth = \Yii::$app->authManager;
+    $roles = \yii\helpers\ArrayHelper::map($auth->getRoles(), 'name', 'description');
+
+    return $this->render('index', [
+        'searchModel' => $searchModel,
+        'dataProvider' => $dataProvider,
+        'roles' => $roles,
+        'selectedRole' => $role, // Role selecionada
+    ]);
+}
 
     /**
      * Displays a single User model.
@@ -85,34 +84,34 @@ class UserController extends SiteController
      * @return string|\yii\web\Response
      */
     public function actionCreate()
-    {
-        $model = new User();
+{
+    $model = new User();
 
-        // Obter lista de roles para o dropdown
-        $auth = \Yii::$app->authManager;
-        $roles = $auth->getRoles();
-        $rolesList = \yii\helpers\ArrayHelper::map($roles, 'name', 'name'); // Mapear name => name
+    // Obter lista de roles para o dropdown
+    $auth = \Yii::$app->authManager;
+    $roles = $auth->getRoles();
+    $rolesList = \yii\helpers\ArrayHelper::map($roles, 'name', 'name'); // Mapear name => name
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                // Atribuir a role selecionada
-                $selectedRole = $this->request->post('User')['role']; // Obter a role do POST
-                if ($selectedRole) {
-                    $role = $auth->getRole($selectedRole);
-                    $auth->assign($role, $model->id); // Atribuir a role ao usuário criado
-                }
-
-                return $this->redirect(['view', 'id' => $model->id]);
+    if ($this->request->isPost) {
+        if ($model->load($this->request->post()) && $model->save()) {
+            // Atribuir a role selecionada
+            $selectedRole = $this->request->post('User')['role']; // Obter a role do POST
+            if ($selectedRole) {
+                $role = $auth->getRole($selectedRole);
+                $auth->assign($role, $model->id); // Atribuir a role ao usuário criado
             }
-        } else {
-            $model->loadDefaultValues();
-        }
 
-        return $this->render('create', [
-            'model' => $model,
-            'roles' => $rolesList, // Passar a lista de roles para a view
-        ]);
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+    } else {
+        $model->loadDefaultValues();
     }
+
+    return $this->render('create', [
+        'model' => $model,
+        'roles' => $rolesList, // Passar a lista de roles para a view
+    ]);
+}
 
 
 

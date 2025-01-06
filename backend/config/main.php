@@ -16,7 +16,7 @@ return [
         'api' => [
             'class' => 'backend\modules\api\ModuleAPI',
         ],
-        ],
+    ],
     'components' => [
         'as access' => [
             'class' => \yii\filters\AccessControl::class,
@@ -58,11 +58,11 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'enableStrictParsing' => true,
             'rules' => [
                 // Regras para a API
                 ['class' => 'yii\rest\UrlRule', 'controller' => ['api/artigos', 'api/user'], 'pluralize' => false],
-
+                'compras/<id:\d+>/validar-artigo' => 'compras/validar-artigo',
+                'compras/<id:\d+>/search-artigo' => 'compras/search-artigo',
                 // Regra geral para rotas do backend
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ],

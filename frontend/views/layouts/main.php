@@ -102,29 +102,24 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
 
                         <!-- Notification -->
                         <a class="text-reset me-3"
-                           href="<?= Yii::$app->urlManager->createUrl(['wishlist/index']) ?>"> <span><i
+                           href="<?= Yii::$app->urlManager->createUrl(['favoritos/index']) ?>"> <span><i
                                         class="fas fa-heart fa-lg px-1 text-black"></i></span>
                         </a>
-
                         <!-- Languages -->
-
 
                         <!-- User -->
                         <div class="dropdown">
                             <?php if (Yii::$app->user->isGuest): ?>
-                                <!-- Dropdown para usuário não autenticado -->
                                 <a href="<?= Url::to(['site/login']) ?>" class="text-reset d-flex align-items-center hidden-arrow">
-                                    <i class="fas fa-user-circle" style="font-size: 22px;"></i> <!-- Ícone de usuário -->
-                                    <span class="ms-2">Login</span> <!-- Texto para login -->
+                                    <i class="fas fa-user-circle" style="font-size: 22px;"></i>
+                                    <span class="ms-2">Login</span>
                                 </a>
                             <?php else: ?>
-                                <!-- Dropdown para usuário autenticado -->
-                                <?php $username = Yii::$app->user->identity->username; // ou use o campo correspondente ao nome do usuário ?>
+                                <?php $username = Yii::$app->user->identity->username; ?>
                                 <a class="text-reset dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
                                    id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-user-circle" style="font-size: 22px;"></i> <!-- Ícone de usuário -->
-
-                                    <span class="ms-2"><?= Html::encode($username) ?></span> <!-- Nome do usuário -->
+                                    <i class="fas fa-user-circle" style="font-size: 22px;"></i>
+                                    <span class="ms-2"><?= Html::encode($username) ?></span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                                     <li><a class="dropdown-item" href="<?= Url::to(['user/index']) ?>">Meu Perfil</a></li>
@@ -141,8 +136,6 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
                                 </ul>
                             <?php endif; ?>
                         </div>
-
-
                     </div>
                 </div>
             </div>
@@ -165,11 +158,6 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
                 <div class="collapse navbar-collapse" id="navbarExampleOnHover">
                     <!-- Left links -->
                     <ul class="navbar-nav me-auto ps-lg-0" style="padding-left: 0.15rem">
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?= Url::to(['artigo/all-artigos'])   ?>">Produtos</a>
-                        </li>
-
 
                         <!-- Navbar dropdown -->
                         <li class="nav-item dropdown dropdown-hover position-static">
@@ -350,18 +338,19 @@ $categorias = Yii::$app->view->params['categorias'] ?? [];
 <?php $this->endPage() ?>
 
 <script>
-    function toggleDropdown() {
-        const dropdownMenu = document.getElementById("userDropdown");
-        dropdownMenu.style.display = dropdownMenu.style.display === "none" ? "block" : "none";
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+    const dropdownToggle = document.getElementById('navbarDropdownMenuLink');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
 
-    // Fecha o dropdown ao clicar fora dele
+    dropdownToggle.addEventListener('click', function (event) {
+        event.preventDefault();
+        dropdownMenu.classList.toggle('show');
+    });
+
     document.addEventListener('click', function (event) {
-        const dropdownMenu = document.getElementById("userDropdown");
-        const avatar = document.getElementById("navbarDropdownMenuLink");
-
-        if (!avatar.contains(event.target) && !dropdownMenu.contains(event.target)) {
-            dropdownMenu.style.display = "none";
+        if (!dropdownToggle.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.classList.remove('show');
         }
     });
+});
 </script>

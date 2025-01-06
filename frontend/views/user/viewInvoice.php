@@ -36,7 +36,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             <address>
                                 <strong><?= Html::encode($model->user->profile->nome) ?></strong><br>
                                 <?= Html::encode($model->user->profile->morada) ?><br>
-                                <?= Html::encode($model->user->profile->cidade) ?>, <?= Html::encode($model->user->profile->codPostal) ?><br>
+                                <?= Html::encode($model->user->profile->cidade) ?>,
+                                <?= Html::encode($model->user->profile->codPostal) ?><br>
                                 <?= Html::encode($model->user->profile->contacto) ?><br>
                                 Email: <?= Html::encode($model->user->email) ?>
                             </address>

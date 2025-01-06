@@ -100,7 +100,7 @@ $this->title = 'Página Inicial';
                         </a>
                         <div class="card-body d-flex flex-column justify-content-center align-items-center">
                             <!-- Botão para adicionar aos favoritos -->
-                            <?= Html::beginForm(['wishlist/add'], 'post') ?>
+                            <?= Html::beginForm(['favoritos/add'], 'post') ?>
                             <?= Html::hiddenInput('id', $destaque->Id) ?>
                             <?= Html::submitButton('<i class="fas fa-heart fa-lg px-1 text-secondary"></i>', [
                                 'class' => 'btn btn-light border px-2 pt-2 float-end icon-hover'

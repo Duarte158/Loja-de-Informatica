@@ -120,7 +120,7 @@ $this->registerJs("
         e.preventDefault();
         var id = $(this).data('id');
         $.ajax({
-            url: '" . \yii\helpers\Url::to(['wishlist/add']) . "',
+            url: '" . \yii\helpers\Url::to(['favoritos/add']) . "',
             type: 'POST',
             data: {
                 id: id,

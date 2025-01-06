@@ -5,12 +5,12 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
-use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
-/** @var array $roles */ // Passar a lista de roles do controlador
-/** @var string|null $selectedRole */ // Role atualmente selecionada
+/** @var backend\models\UserSearch $searchModel */
+/** @var array $roles */
+/** @var string|null $selectedRole */
 
 $this->title = 'Users';
 $this->params['breadcrumbs'][] = $this->title;
@@ -22,22 +22,20 @@ $this->params['breadcrumbs'][] = $this->title;
         vertical-align: top;
         margin: 0;
         padding: 5px;
-        position: absolute; /* Posiciona de forma absoluta em relação ao seu elemento pai */
-        left: 0; /* Alinha à borda esquerda */
-        top: 0; /* Alinha ao topo, você pode ajustar a posição conforme necessário */
+        position: absolute;
+        left: 0;
+        top: 0;
     }
     .filter-dropdown select {
-        width: auto; /* Faz o dropdown ajustar ao tamanho do conteúdo */
-        font-size: 14px; /* Ajuste o tamanho da fonte, se necessário */
-        padding: 5px; /* Ajuste o espaçamento interno do dropdown */
-        border-radius: 4px; /* Suaviza as bordas */
-        border: 1px solid #ccc; /* Define a borda */
-        background-color: #fff; /* Cor de fundo */
+        width: auto;
+        font-size: 14px;
+        padding: 5px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        background-color: #fff;
     }
 </style>
 <div class="user-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <div class="row">
         <div class="col-md-8">
@@ -46,38 +44,30 @@ $this->params['breadcrumbs'][] = $this->title;
             </p>
         </div>
         <div class="col-md-4">
-            <?php $form = ActiveForm::begin(['method' => 'get', 'action' => ['index']]); ?>
             <div class="filter-dropdown">
+                <?= Html::beginForm(['index'], 'get') ?>
                 <?= Html::dropDownList(
                     'role',
                     $selectedRole,
                     $roles,
                     [
-                        'class' => 'form-control', // Ou use 'form-control-sm' para um tamanho menor
-                        'prompt' => 'Filtrar por Role',
-                        'onchange' => 'this.form.submit()' // Envia o formulário ao alterar a seleção
+                        'class' => 'form-control',
+                        'prompt' => 'Filter by Role',
+                        'onchange' => 'this.form.submit()'
                     ]
                 ) ?>
+                <?= Html::endForm() ?>
             </div>
-            <?php ActiveForm::end(); ?>
         </div>
     </div>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            //'id',
             'username',
-            //'auth_key',
-            //'password_hash',
-            //'password_reset_token',
             'email:email',
-            //'status',
-            //'created_at',
-            //'updated_at',
-            //'verification_token',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, User $model, $key, $index, $column) {

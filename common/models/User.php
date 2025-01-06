@@ -22,6 +22,7 @@ use yii\web\IdentityInterface;
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
+ * @property string $role
  *
  * @property Profile $profile
  */
@@ -37,7 +38,7 @@ class User extends ActiveRecord implements IdentityInterface
     public $password;
 
     /**
-     * Atributo temporário para a senha
+     * Atributo temporário para a role
      */
     public $role;
 
@@ -243,7 +244,6 @@ class User extends ActiveRecord implements IdentityInterface
         }
         return parent::beforeSave($insert);
     }
-
 
     public function getAuthAssignments()
     {

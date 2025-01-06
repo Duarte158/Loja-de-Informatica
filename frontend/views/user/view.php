@@ -27,19 +27,19 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
     <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'username',
-            'auth_key',
-            'password_hash',
-            'password_reset_token',
-            'email:email',
-            'status',
-            'created_at',
-            'updated_at',
-            'verification_token',
-        ],
-    ]) ?>
+    'model' => $model,
+    'attributes' => [
+        'id',
+        'username',
+        'auth_key',
+        'password_hash',
+        'password_reset_token',
+        'verification_token',
+        'email:email',
+        'status',
+        'created_at:datetime',
+        'updated_at:datetime',
+    ],
+]) ?>
 
 </div>
