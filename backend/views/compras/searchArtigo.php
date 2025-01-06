@@ -1,66 +1,60 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
-
+use yii\helpers\Url;
+use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
-/** @var yii\data\ActiveDataProvider $dataProvider */
+/** @var common\models\Artigos[] $artigos */
+/** @var backend\models\Compras $model */
 
-$this->title = 'Buscar Fornecedores';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Selecionar Artigo';
 ?>
 
-<div class="content">
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Fornecedores</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Fornecedores</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </section>
+<div class="table-responsive">
+    <?php $form = ActiveForm::begin([
+        'action' => Url::to(['compras/adicionar-varios-artigos', 'id' => $model->id]),
+        'method' => 'post',
+    ]); ?>
 
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <!-- Lista de Fornecedores -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Artigos disponíveis</h3>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nome</th>
-                                    <th>Ação</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <?php foreach ($artigos as $artigo): ?>
-                                    <tr>
-                                        <td><?= Html::encode($artigo->Id) ?></td>
-                                        <td><?= Html::encode($artigo->nome) ?></td>
-                                        <td>
-                                            <?= Html::a('Selecionar', ['compras/select', 'id' => $model->id, 'fornecedor_id' => $artigo->Id], ['class' => 'btn btn-success']) ?>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Selecionar</th>
+            <th>Referência</th>
+            <th>Nome</th>
+            <th>Preço Unitário</th>
+            <th>Quantidade</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($artigos as $artigo): ?>
+            <tr>
+                <td>
+                    <!-- Checkbox para selecionar o artigo -->
+                    <?= Html::checkbox("artigos[{$artigo->Id}][selecionado]", false, [
+                        'class' => 'form-check-input',
+                    ]) ?>
+                </td>
+                <td><?= Html::encode($artigo->referencia) ?></td>
+                <td><?= Html::encode($artigo->nome) ?></td>
+                <td><?= Html::encode($artigo->precoUni) ?></td>
+                <td>
+                    <!-- Input para definir a quantidade do artigo -->
+                    <?= Html::input('number', "artigos[{$artigo->Id}][quantidade]", 1, [
+                        'class' => 'form-control',
+                        'min' => 1,
+                        'style' => 'width: 100px;',
+                    ]) ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <div class="form-group">
+        <!-- Botão para adicionar os artigos selecionados -->
+        <?= Html::submitButton('Adicionar Artigos Selecionados', ['class' => 'btn btn-success']) ?>
+    </div>
+
+    <?php ActiveForm::end(); ?>
 </div>

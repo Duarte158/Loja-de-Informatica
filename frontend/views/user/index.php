@@ -12,10 +12,10 @@ use yii\bootstrap5\Html;
                 <div class="card" style="width: 100%;">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item <?= Yii::$app->controller->action->id === 'index' ? 'active' : '' ?>" style="cursor: pointer;">
-                            <?= Html::a('Perfil', ['user/index', 'id' => $model->id], ['class' => 'text-decoration-none d-block']) ?>
+                            <?= Html::a('Perfil', ['user/index', 'id' => $model->Id], ['class' => 'text-decoration-none d-block']) ?>
                         </li>
                         <li class="list-group-item <?= Yii::$app->controller->action->id === 'compras' ? 'active' : '' ?>" style="cursor: pointer;">
-                            <?= Html::a('Compras', ['user/compras', 'id' => $model->id], ['class' => 'text-decoration-none d-block ']) ?>
+                            <?= Html::a('Compras', ['user/compras', 'id' => $model->Id], ['class' => 'text-decoration-none d-block ']) ?>
                         </li>
                     </ul>
                 </div>
@@ -39,7 +39,7 @@ use yii\bootstrap5\Html;
                                                 <strong>Nome:</strong>
                                             </div>
                                             <div class="col-sm-8">
-                                                <?= $model->profile !== null ? Html::encode($model->profile->name) : 'N/A' ?>
+                                                <?= $model->profile !== null ? Html::encode($model->profile->nome) : 'N/A' ?>
                                             </div>
                                         </div>
                                         <hr>
@@ -57,7 +57,7 @@ use yii\bootstrap5\Html;
                                                 <strong>Morada:</strong>
                                             </div>
                                             <div class="col-sm-8">
-                                                <?= $model->profile !== null ? Html::encode($model->profile->address) : 'N/A' ?>
+                                                <?= $model->profile !== null ? Html::encode($model->profile->morada) : 'N/A' ?>
                                             </div>
                                         </div>
                                         <hr>
@@ -75,7 +75,7 @@ use yii\bootstrap5\Html;
                                                 <strong>Codigo Postal:</strong>
                                             </div>
                                             <div class="col-sm-8">
-                                                <?= $model->profile !== null ? Html::encode($model->profile->codpostal) : 'N/A' ?>
+                                                <?= $model->profile !== null ? Html::encode($model->profile->codPostal) : 'N/A' ?>
                                             </div>
                                         </div>
                                         <hr>
@@ -84,7 +84,7 @@ use yii\bootstrap5\Html;
                                                 <strong>Contacto:</strong>
                                             </div>
                                             <div class="col-sm-8">
-                                                <?= $model->profile !== null ? Html::encode($model->profile->contact) : 'N/A' ?>
+                                                <?= $model->profile !== null ? Html::encode($model->profile->contacto) : 'N/A' ?>
                                             </div>
                                         </div>
                                         <hr>
@@ -99,7 +99,7 @@ use yii\bootstrap5\Html;
 
                                         <hr>
                                         <p>
-                                            <?= Html::a('Atualizar Dados', ['update', 'id' => $model->id], ['class' => 'btn btn-danger']) ?>
+                                            <?= Html::a('Atualizar Dados', ['update', 'id' => $model->Id], ['class' => 'btn btn-danger']) ?>
                                         </p>
                                     </div>
                                 </div>

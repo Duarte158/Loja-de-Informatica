@@ -74,6 +74,9 @@ class SiteController extends Controller
             // Se o usuário já está logado, redirecione para a página inicial
             return $this->redirect(['site/index']);
         }
+
+        $this->layout = 'blank';
+
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             // Após login bem-sucedido, redirecione para a página inicial

@@ -80,16 +80,13 @@ public function signup()
         $profile->cidade = $this->cidade;
         $profile->codPostal = $this->codPostal;
 
-        if ($profile->validate()) {
-            $profile->save(false);
+
+        $profile->save(false);
 
 
 
             return $user;
-        } else {
-            // Handle validation errors
-            Yii::error('Profile validation failed: ' . json_encode($profile->errors));
-        }
+
     }
 
     return null;

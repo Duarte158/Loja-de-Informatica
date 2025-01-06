@@ -22,6 +22,8 @@ $profile = $model->profile ?? new \common\models\Profile();
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
     <!-- Campos do Profile -->
+    <?= $form->field($profile, 'nome')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($profile, 'morada')->textInput(['maxlength' => true]) ?>
     <?= $form->field($profile, 'nif')->textInput(['maxlength' => true]) ?>
     <?= $form->field($profile, 'contacto')->textInput(['maxlength' => true]) ?>

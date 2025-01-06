@@ -24,14 +24,9 @@ use yii\helpers\Html;
                 <i class="fas fa-user-circle"></i>
             </div>
             <div class="info">
-                <?php
-                if (!Yii::$app->user->isGuest) {
-                    // Obtém o objeto de identidade do usuário
-                    $user = Yii::$app->user->identity;
-                    // Exibe o nome do usuário
-                    echo "<a href='#' class='d-block'>Utilizador:  " . $user->username . "</a>";
-                }
-                ?>
+                <a href="<?= \yii\helpers\Url::to(['user/view', 'id' => Yii::$app->user->getId()]) ?>">
+                    <?= Html::encode(\Yii::$app->user->identity->username) ?>
+                </a>
             </div>
         </div>
 
@@ -44,13 +39,13 @@ use yii\helpers\Html;
                     ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => Yii::$app->user->isGuest],
                     ['label' => 'Gii',  'icon' => 'file-code', 'url' => ['/gii'], 'target' => '_blank'],
 
-                    ['label' => 'Zona Cliente', 'header' => true, 'visible' => Yii::$app->user->can('cliente') || Yii::$app->user->can('admin')],
+                    ['label' => 'Zona Cliente', 'header' => true],
                     ['label' => 'Users', 'icon' => 'user', 'url' => ['user/index'], 'visible' => Yii::$app->user->can('cliente') || Yii::$app->user->can('admin')],
 
                     ['label' => 'Zona Funcionário', 'header' => true, 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
                     ['label' => 'Funcionários', 'icon' => 'user', 'url' => ['funcionario/index'], 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
 
-                    ['label' => 'Zona Artigos', 'header' => true, 'visible' => Yii::$app->user->can('cliente') || Yii::$app->user->can('admin')],
+                    ['label' => 'Zona Artigos', 'header' => true],
                     ['label' => 'Artigos', 'icon' => 'fas fa-boxes', 'url' => ['artigos/index'], 'visible' => Yii::$app->user->can('admin') || Yii::$app->user->can('funcionario')],
                     ['label' => 'Categorias', 'icon' => 'fas fa-plus', 'url' => ['categoria/index'], 'visible' => Yii::$app->user->can('admin')],
                     ['label' => 'Iva', 'icon' => 'fas fa-plus', 'url' => ['iva/index'], 'visible' => Yii::$app->user->can('admin')],

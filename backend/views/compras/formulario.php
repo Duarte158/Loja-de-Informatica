@@ -6,7 +6,6 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var backend\models\Compras $model */
 ?>
-
 <div class="content">
     <!-- Content Header -->
     <section class="content-header">
@@ -63,9 +62,6 @@ use yii\widgets\ActiveForm;
                                     </div>
                                     <?php ActiveForm::end(); ?>
 
-                                    <!-- Exibindo a lista de fornecedores -->
-
-                                        </div>
                                 </address>
                             </div>
 
@@ -82,26 +78,72 @@ use yii\widgets\ActiveForm;
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
+                                        <th>Referência</th>
+                                        <th>Nome</th>
                                         <th>Quantidade</th>
-                                        <th>Produto</th>
-                                        <th>Preço</th>
-                                        <th>Subtotal</th>
+                                        <th>Valor Uni</th>
+                                        <th>Total</th>
+
+                                        <th>Ações</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <!-- Aqui você pode listar as linhas já associadas à compra -->
+                                    <!-- Linha de Input para Adicionar Artigo -->
+                                    <tr>
+                                        <?php $form = ActiveForm::begin([
+                                            'action' => ['compras/validar-artigo', 'id' => $model->id], // Controller e Action
+                                            'method' => 'post',
+                                        ]); ?>
+
+                                        <div class="form-group">
+                                            <?= Html::textInput('referencia', '', ['class' => 'form-control', 'placeholder' => 'Digite a Referência do Artigo']) ?>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <?= Html::input('number', 'quantidade', '', ['class' => 'form-control', 'min' => 1, 'placeholder' => 'Quantidade']) ?>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <?= Html::submitButton('Selecionar', ['class' => 'btn btn-primary']) ?>
+                                        </div>
+
+                                        <?php ActiveForm::end(); ?>
+                                    </tr>
+
+                                    <!-- Aqui você vai listar as linhas de compra associadas -->
+                                    <?php foreach ($linhas as $linha): ?>
+                                        <tr>
+                                            <td><?= Html::encode($linha->artigo->referencia) ?></td> <!-- Exibe a referência do artigo -->
+                                            <td><?= Html::encode($linha->artigo->nome) ?></td> <!-- Exibe a referência do artigo -->
+
+                                            <td><?= Html::encode($linha->quantidade) ?></td> <!-- Exibe a quantidade -->
+                                            <td><?= Html::encode($linha->artigo->precoUni) ?>€</td> <!-- Exibe a referência do artigo -->
+                                            <td><?= Html::encode($linha->total) ?>€</td> <!-- Exibe a referência do artigo -->
+
+
+                                            <td>
+                                                <?= Html::a('Editar', ['compras/editar-linha', 'id' => $linha->id], ['class' => 'btn btn-warning']) ?>
+                                                <?= Html::a('Excluir', ['compras/excluir-linha', 'id' => $linha->id], [
+                                                    'class' => 'btn btn-danger',
+                                                    'data-method' => 'post',
+                                                    'data-confirm' => 'Tem certeza de que deseja excluir esta linha?'
+                                                ]) ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
                                     </tbody>
                                 </table>
-                                <button class="btn btn-success" onclick="addLinha()">Adicionar Linha</button>
                             </div>
                         </div>
 
                         <!-- Final Actions -->
                         <div class="row no-print">
                             <div class="col-12">
-                                <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
-                                    <i class="fas fa-save"></i> Finalizar Compra
-                                </button>
+                                <?= Html::a('Finalizar Compra', ['compras/finalizar-compra', 'id' => $model->id], [
+                                    'class' => 'btn btn-success float-right',
+                                    'data-method' => 'post',
+                                    'data-confirm' => 'Tem certeza de que deseja finalizar esta compra? O estado será alterado para "Finalizado" e o stock será atualizado.',
+                                ]) ?>
                             </div>
                         </div>
                     </div>
