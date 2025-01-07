@@ -52,6 +52,7 @@ use yii\helpers\Html;
 
                     ['label' => 'Zona Fornecedor', 'header' => true, 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
                     ['label' => 'Fornecedores', 'icon' => 'user', 'url' => ['fornecedor/index'], 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
+                    ['label' => 'Adicionar Stock','icon'=>'fas fa-boxes','url'=>['compras/index'], 'visible'=>Yii::$app->user->can('funcionario')|| Yii::$app->user->can('admin')],
 
 
                     ['label' => 'Entregas', 'header' => true, 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
