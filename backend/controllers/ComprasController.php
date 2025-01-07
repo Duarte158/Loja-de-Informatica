@@ -82,11 +82,7 @@ class ComprasController extends Controller
     public function actionCreate()
     {
 
-
-
         $model = new Compras();
-
-
 
         // Define a data atual
         $model->data = date('Y-m-d'); // Ajuste o formato conforme necessário
@@ -99,8 +95,6 @@ class ComprasController extends Controller
             // Redireciona para a página de visualização do registro recém-criado
             return $this->redirect(['formulario', 'id' => $model->id]);
         }
-
-
 
         // Caso o salvamento falhe (por exemplo, erro de validação), renderiza o formulário
         return $this->render('create', [

@@ -2,7 +2,11 @@
 
 namespace backend\models;
 
+
 use Yii;
+use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
+use backend\models\Fornecedor;
 
 /**
  * This is the model class for table "compras".
