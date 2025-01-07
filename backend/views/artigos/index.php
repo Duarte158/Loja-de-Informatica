@@ -15,6 +15,8 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="artigos-index">
 
+    <h1><?= Html::encode($this->title) ?></h1>
+
     <p>
         <?= Html::a('Create Artigos', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
@@ -26,9 +28,28 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+
+            'Id',
             'nome',
-            'descricao:ntext',
-            ['class' => 'yii\grid\ActionColumn'],
+            'descricao',
+            'precoUni',
+            'stock',
+            //'categoria_id',
+            //'iva_id',
+            //'destaque',
+            //'referencia',
+            //'imagem',
+            //'precoFinal',
+            //'marca_id',
+            //'unidade_id',
+            [
+                'class' => ActionColumn::className(),
+                'urlCreator' => function ($action, Artigos $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'Id' => $model->Id]);
+                }
+            ],
         ],
     ]); ?>
+
+
 </div>

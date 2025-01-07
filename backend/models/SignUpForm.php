@@ -10,7 +10,7 @@ use common\models\User;
 /**
  * Signup form
  */
-class SignupForm extends Model
+class SignUpForm extends Model
 {
     public $username;
     public $email;
@@ -42,6 +42,13 @@ class SignupForm extends Model
 
             ['password', 'required'],
             ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
+
+            ['nif', 'required'],
+            ['nome', 'required'],
+            ['morada', 'required'],
+            ['contacto', 'required'],
+            ['cidade', 'required'],
+            ['codPostal', 'required'],
         ];
     }
 
@@ -61,6 +68,7 @@ class SignupForm extends Model
             $user->generateAuthKey();
             $user->save(false);
 
+            // Criar e salvar o perfil
             $profile = new Profile();
             $profile->user_id = $user->id;
             $profile->nome = $this->nome;
@@ -69,17 +77,16 @@ class SignupForm extends Model
             $profile->contacto = $this->contacto;
             $profile->cidade = $this->cidade;
             $profile->codPostal = $this->codPostal;
+            $profile->save(false);
 
-            if ($profile->validate()) {
-                $profile->save(false);
-
-
-
-                return $user;
-            } else {
-                // Handle validation errors
-                Yii::error('Profile validation failed: ' . json_encode($profile->errors));
+            // Atribuir a role "funcionario" ao usuário criado
+            $auth = \Yii::$app->authManager; // Obter o gerenciador de autenticação (AuthManager)
+            $funcionarioRole = $auth->getRole('admin'); // Obter a role "funcionario"
+            if ($funcionarioRole) {
+                $auth->assign($funcionarioRole, $user->id); // Atribuir a role ao usuário criado
             }
+
+            return $user;
         }
 
         return null;

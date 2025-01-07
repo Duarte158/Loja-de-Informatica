@@ -2,52 +2,57 @@
 
 namespace backend\controllers;
 
+use app\models\EntregasSearch;
+use common\models\Entregas;
 use Yii;
-use common\models\Funcionario;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * FuncionarioController implements the CRUD actions for Funcionario model.
+ * EntregasController implements the CRUD actions for Entregas model.
  */
-class FuncionarioController extends Controller
+class EntregasController extends Controller
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function behaviors()
     {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
+        return array_merge(
+            parent::behaviors(),
+            [
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'delete' => ['POST'],
+                    ],
                 ],
-            ],
-        ];
+            ]
+        );
     }
 
     /**
-     * Lists all Funcionario models.
-     * @return mixed
+     * Lists all Entregas models.
+     *
+     * @return string
      */
-  public function actionIndex()
-{
-    $dataProvider = new ActiveDataProvider([
-        'query' => Funcionario::find()->joinWith('authAssignments')->where(['auth_assignment.item_name' => 'funcionario']),
-    ]);
+    public function actionIndex()
+    {
+        $searchModel = new EntregasSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-    return $this->render('index', [
-        'dataProvider' => $dataProvider,
-    ]);
-}
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
 
     /**
-     * Displays a single Funcionario model.
-     * @param integer $id
-     * @return mixed
+     * Displays a single Entregas model.
+     * @param int $id ID
+     * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
@@ -58,20 +63,16 @@ class FuncionarioController extends Controller
     }
 
     /**
-     * Creates a new Funcionario model.
+     * Creates a new Entregas model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Funcionario();
+        $model = new Entregas();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                $auth = Yii::$app->authManager;
-                $role = $auth->getRole('funcionario');
-                $auth->assign($role, $model->id);
-
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -83,23 +84,18 @@ class FuncionarioController extends Controller
         ]);
     }
 
-
-
-
-
-
     /**
-     * Updates an existing Funcionario model.
+     * Updates an existing Entregas model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     * @param int $id ID
+     * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -109,10 +105,10 @@ class FuncionarioController extends Controller
     }
 
     /**
-     * Deletes an existing Funcionario model.
+     * Deletes an existing Entregas model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+     * @param int $id ID
+     * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
@@ -123,15 +119,15 @@ class FuncionarioController extends Controller
     }
 
     /**
-     * Finds the Funcionario model based on its primary key value.
+     * Finds the Entregas model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Funcionario the loaded model
+     * @param int $id ID
+     * @return Entregas the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Funcionario::findOne($id)) !== null) {
+        if (($model = Entregas::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

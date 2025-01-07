@@ -4,6 +4,9 @@ namespace frontend\controllers;
 
 use backend\models\Linhacarrinho;
 use common\models\CarrinhoCompras;
+use common\models\Entregas;
+use common\models\Fatura;
+use common\models\Metodopagamento;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -77,6 +80,8 @@ class CarrinhoComprasController extends Controller
             return $this->redirect(['site/login']);
         }
 
+        $metodo = Metodopagamento::find()->all();
+
         // Obtém o carrinho "ativo" do usuário logado
         $carrinho = CarrinhoCompras::find()
             ->where(['user_id' => Yii::$app->user->id, 'estado' => 'ativo'])
@@ -100,7 +105,138 @@ class CarrinhoComprasController extends Controller
             'linhasCarrinho' => $linhasCarrinho,
             'carrinho' => $carrinho,
             'user' => $user,
+            'metodos' => $metodo
         ]);
+    }
+
+
+    public function actionFinalizar()
+    {
+        // Receber os dados do formulário
+        $request = Yii::$app->request;
+
+        // Verifica se o método é POST
+        if ($request->isPost) {
+            // Obter o usuário logado
+            $user = Yii::$app->user->identity;
+
+            // Verifica se o usuário está logado
+            if (!$user) {
+                Yii::$app->session->setFlash('error', 'Você precisa estar logado para finalizar a compra.');
+                return $this->redirect(['site/login']);
+            }
+
+            // Obter o carrinho associado ao usuário logado
+            $carrinho = CarrinhoCompras::find()
+                ->where(['user_id' => $user->id, 'estado' => 'ativo'])
+                ->one();
+
+            if (!$carrinho) {
+                Yii::$app->session->setFlash('error', 'O carrinho está vazio ou não foi encontrado.');
+                return $this->redirect(['site/checkout']);
+            }
+
+            // Verificar se o método de pagamento foi selecionado
+            $metodoPagamentoID = $request->post('metodoPagamento_id');
+            if (!$metodoPagamentoID) {
+                Yii::$app->session->setFlash('error', 'Por favor, selecione um método de pagamento.');
+                return $this->redirect(['site/checkout']);
+            }
+
+            // Criar uma nova instância da model "Encomenda"
+            $encomenda = new Entregas();
+
+            // Verificar se o endereço de cobrança é o mesmo que o de envio
+            $mesmoEndereco = $request->post('mesmoEndereco', true); // "true" se a checkbox estiver marcada
+            Yii::$app->session->setFlash('endereço', 'Valor de mesmoEndereco: ' . ($mesmoEndereco ? 'true' : 'false'));
+
+            if ($mesmoEndereco) {
+                // Usar os dados do perfil do usuário
+                $perfil = $user->profile;
+                if (!$perfil) {
+                    Yii::$app->session->setFlash('error', 'Erro ao carregar os dados do perfil do usuário.');
+                    return $this->redirect(['site/checkout']);
+                }
+
+                $encomenda->nome = $perfil->nome;
+                $encomenda->morada = $perfil->morada;
+                $encomenda->cidade = $perfil->cidade;
+                $encomenda->contacto = $perfil->contacto;
+                $encomenda->codPostal = $perfil->codPostal;
+            } else {
+                // Usar os dados do formulário de endereço de envio
+                $encomenda->nome = $request->post('nomeEnvio');
+                $encomenda->morada = $request->post('enderecoEnvio');
+                $encomenda->cidade = $request->post('cidadeEnvio');
+                $encomenda->contacto = $request->post('contactoEnvio');
+                $encomenda->codPostal = $request->post('codpostalEnvio');
+            }
+
+            // Criar uma nova instância da model "Fatura"
+            $fatura = new Fatura();
+            $fatura->data = date('Y-m-d H:i:s'); // Data da fatura
+            $fatura->user_id = $user->id; // Usuário logado
+            $fatura->metodoPagamento_id = $metodoPagamentoID;
+            $fatura->carrinho_id = $carrinho->id; // Relacionar a fatura ao carrinho
+
+            // Salvar a fatura
+            if (!$fatura->save()) {
+                Yii::$app->session->setFlash('error', 'Erro ao criar a fatura. Verifique os dados.');
+                Yii::debug($fatura->errors); // Log dos erros
+                return $this->redirect(['site/checkout']);
+            }
+
+            // Preencher os outros dados da encomenda
+            $encomenda->estado = 'Por entregar'; // Estado inicial da encomenda
+            $encomenda->data = date('Y-m-d H:i:s'); // Data atual
+            $encomenda->carrinho_id = $carrinho->id; // Relacionar a encomenda ao carrinho
+
+            // Salvar a encomenda
+            if ($encomenda->save()) {
+                // Atualizar o estado do carrinho para "finalizado"
+                $carrinho->estado = 'finalizado';
+                if (!$carrinho->save()) {
+                    Yii::$app->session->setFlash('error', 'Erro ao atualizar o estado do carrinho.');
+                    Yii::debug($carrinho->errors); // Log dos erros
+                    return $this->redirect(['site/checkout']);
+                }
+
+                // Iterar pelas linhas do carrinho e descontar o estoque
+                foreach ($carrinho->linhacarrinhos as $linha) {
+                    $produto = $linha->artigo; // Supondo que a linha do carrinho tem a relação com o produto
+                    if ($produto) {
+                        $produto->stock -= $linha->quantidade; // Desconta a quantidade comprada
+
+                        if (!$produto->save()) {
+                            // Caso falhe ao salvar o produto (descontar o estoque)
+                            Yii::$app->session->setFlash('error', 'Erro ao atualizar o estoque do produto: ' . $produto->nome);
+                            Yii::debug($produto->errors); // Log dos erros
+                            return $this->redirect(['site/checkout']);
+                        }
+                    }
+                }
+
+                // Redireciona para a página de confirmação
+                return $this->redirect(['carrinho-compras/confirmacao']);
+            } else {
+                Yii::$app->session->setFlash('error', 'Erro ao salvar a encomenda.');
+                Yii::debug($encomenda->errors); // Log dos erros
+            }
+        }
+
+        // Caso o método não seja POST ou algo falhe
+        Yii::$app->session->setFlash('error', 'Erro ao processar o pedido. Tente novamente.');
+        return $this->redirect(['site/checkout']);
+    }
+
+
+
+
+    public function actionConfirmacao(){
+
+        return $this->render('confirmacao');
+
+
     }
 
 

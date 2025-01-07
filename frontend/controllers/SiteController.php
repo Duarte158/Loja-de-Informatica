@@ -146,6 +146,8 @@ class SiteController extends Controller
         ]);
     }
 
+
+
     /**
      * Displays about page.
      *

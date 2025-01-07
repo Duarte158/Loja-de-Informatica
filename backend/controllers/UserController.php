@@ -83,35 +83,7 @@ class UserController extends SiteController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
-{
-    $model = new User();
 
-    // Obter lista de roles para o dropdown
-    $auth = \Yii::$app->authManager;
-    $roles = $auth->getRoles();
-    $rolesList = \yii\helpers\ArrayHelper::map($roles, 'name', 'name'); // Mapear name => name
-
-    if ($this->request->isPost) {
-        if ($model->load($this->request->post()) && $model->save()) {
-            // Atribuir a role selecionada
-            $selectedRole = $this->request->post('User')['role']; // Obter a role do POST
-            if ($selectedRole) {
-                $role = $auth->getRole($selectedRole);
-                $auth->assign($role, $model->id); // Atribuir a role ao usuário criado
-            }
-
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-    } else {
-        $model->loadDefaultValues();
-    }
-
-    return $this->render('create', [
-        'model' => $model,
-        'roles' => $rolesList, // Passar a lista de roles para a view
-    ]);
-}
 
 
 

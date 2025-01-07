@@ -16,13 +16,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'valorTotal')->textInput() ?>
 
-    <?= $form->field($model, 'opçãoEntrega')->textInput() ?>
-
     <?= $form->field($model, 'valorIva')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'user_id')->textInput() ?>
 
     <?= $form->field($model, 'metodoPagamento_id')->textInput() ?>
+
+    <?= $form->field($model, 'carrinho_id')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

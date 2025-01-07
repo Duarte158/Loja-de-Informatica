@@ -53,6 +53,15 @@ use yii\helpers\Html;
                     ['label' => 'Zona Fornecedor', 'header' => true, 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
                     ['label' => 'Fornecedores', 'icon' => 'user', 'url' => ['fornecedor/index'], 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
 
+
+                    ['label' => 'Entregas', 'header' => true, 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
+                    ['label' => 'Entregas', 'icon' => 'user', 'url' => ['entregas/index'], 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
+
+
+
+                    ['label' => 'Faturação', 'header' => true, 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
+                    ['label' => 'Faturas', 'icon' => 'user', 'url' => ['fatura/index'], 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
+
                     // Botão de logout
                     ['label' => 'Logout', 'url' => ['site/logout'], 'icon' => 'sign-out-alt', 'template' => '<a href="{url}" data-method="post">{icon} {label}</a>'],
                 ],

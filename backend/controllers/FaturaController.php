@@ -2,52 +2,65 @@
 
 namespace backend\controllers;
 
-use Yii;
-use common\models\Funcionario;
+use common\models\Fatura;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * FuncionarioController implements the CRUD actions for Funcionario model.
+ * FaturaController implements the CRUD actions for Fatura model.
  */
-class FuncionarioController extends Controller
+class FaturaController extends Controller
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function behaviors()
     {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
+        return array_merge(
+            parent::behaviors(),
+            [
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'delete' => ['POST'],
+                    ],
                 ],
-            ],
-        ];
+            ]
+        );
     }
 
     /**
-     * Lists all Funcionario models.
-     * @return mixed
+     * Lists all Fatura models.
+     *
+     * @return string
      */
-  public function actionIndex()
-{
-    $dataProvider = new ActiveDataProvider([
-        'query' => Funcionario::find()->joinWith('authAssignments')->where(['auth_assignment.item_name' => 'funcionario']),
-    ]);
+    public function actionIndex()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => Fatura::find(),
+            /*
+            'pagination' => [
+                'pageSize' => 50
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ]
+            ],
+            */
+        ]);
 
-    return $this->render('index', [
-        'dataProvider' => $dataProvider,
-    ]);
-}
+        return $this->render('index', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
 
     /**
-     * Displays a single Funcionario model.
-     * @param integer $id
-     * @return mixed
+     * Displays a single Fatura model.
+     * @param int $id ID
+     * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
@@ -58,20 +71,16 @@ class FuncionarioController extends Controller
     }
 
     /**
-     * Creates a new Funcionario model.
+     * Creates a new Fatura model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Funcionario();
+        $model = new Fatura();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                $auth = Yii::$app->authManager;
-                $role = $auth->getRole('funcionario');
-                $auth->assign($role, $model->id);
-
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -83,23 +92,18 @@ class FuncionarioController extends Controller
         ]);
     }
 
-
-
-
-
-
     /**
-     * Updates an existing Funcionario model.
+     * Updates an existing Fatura model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     * @param int $id ID
+     * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -109,10 +113,10 @@ class FuncionarioController extends Controller
     }
 
     /**
-     * Deletes an existing Funcionario model.
+     * Deletes an existing Fatura model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+     * @param int $id ID
+     * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
@@ -123,15 +127,15 @@ class FuncionarioController extends Controller
     }
 
     /**
-     * Finds the Funcionario model based on its primary key value.
+     * Finds the Fatura model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Funcionario the loaded model
+     * @param int $id ID
+     * @return Fatura the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Funcionario::findOne($id)) !== null) {
+        if (($model = Fatura::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
