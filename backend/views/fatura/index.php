@@ -20,7 +20,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Fatura', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -28,19 +27,28 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'data',
-            'valorTotal',
-            'valorIva',
             'user_id',
-            //'metodoPagamento_id',
-            //'carrinho_id',
+            [
+                'attribute' => 'metodoPagamento.nome',
+                'label' => 'Método de Pagamento',
+                'value' => function ($model) {
+                    return $model->metodoPagamento->nome ?? 'Não definido'; // Mostra "Não definido" se não houver relação
+                },
+            ],
+            [
+                'attribute' => 'carrinho.valorTotal',
+                'label' => 'Valor Total',
+                'value' => function ($model) {
+                    return $model->carrinho->valorTotal ?? 'Não definido'; // Mostra "Não definido" se não houver relação
+                },
+            ],
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Fatura $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                }
             ],
         ],
     ]); ?>
-
 
 </div>

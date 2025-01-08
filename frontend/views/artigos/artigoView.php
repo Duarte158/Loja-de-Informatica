@@ -98,48 +98,22 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]) ?>
                     <?= Html::endForm() ?>
 
-                    <?= Html::a(
+                    <?= Html::beginForm(['favoritos/add'], 'post', ['class' => 'form-add-to-wishlist']) ?>
+                    <?= Html::hiddenInput('id', $model->Id) ?>
+                    <?= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->csrfToken) ?>
+                    <?= Html::submitButton(
                         '<i class="fas fa-heart fa-lg px-1 text-secondary"></i>',
-                        '#',
                         [
-                            'class' => 'btn btn-light border px-2 pt-2 float-end icon-hover add-to-wishlist',
-                            'data-id' => $model->Id,
+                            'class' => 'btn btn-light border px-2 pt-2 float-end icon-hover',
+                            'style' => 'background: none; border: none; padding: 0; margin: 0;',
                         ]
                     ) ?>
+                    <?= Html::endForm() ?>
                 </div>
             </main>
         </div>
     </div>
 </section>
 
-
-<?php
-$csrfToken = Yii::$app->request->csrfToken;
-$this->registerJs("
-    $('.add-to-wishlist').click(function(e) {
-        e.preventDefault();
-        var id = $(this).data('id');
-        $.ajax({
-            url: '" . \yii\helpers\Url::to(['favoritos/add']) . "',
-            type: 'POST',
-            data: {
-                id: id,
-                _csrf: '{$csrfToken}'  // Adiciona o token CSRF aqui
-            },
-            success: function(response) {
-                if (response.success) {
-                    alert(response.message);
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Erro na requisição:', xhr.responseText);
-                alert('Ocorreu um erro ao adicionar à wishlist.');
-            }
-        });
-    });
-");
-?>
 
 

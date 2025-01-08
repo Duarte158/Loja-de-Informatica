@@ -1,5 +1,6 @@
 <?php
 
+use http\Url;
 use yii\helpers\Html;
 
 ?>
@@ -23,11 +24,23 @@ use yii\helpers\Html;
             <div style="font-size: 30px; color: #6c757d;"> <!-- Ajuste o tamanho e cor -->
                 <i class="fas fa-user-circle"></i>
             </div>
+
+
             <div class="info">
-                <a href="<?= \yii\helpers\Url::to(['user/view', 'id' => Yii::$app->user->getId()]) ?>">
-                    <?= Html::encode(\Yii::$app->user->identity->username) ?>
-                </a>
+                <?php
+                if (!Yii::$app->user->isGuest) {
+                    $userId = Yii::$app->user->id;
+                    $username = Yii::$app->user->identity->username;
+
+
+                    $userViewUrl = Yii::$app->urlManager->createUrl(['/user/view', 'id' => $userId]);
+
+
+                    echo "<a href='{$userViewUrl}' class='d-block'>Utilizador: {$username}</a>";
+                }
+                ?>
             </div>
+
         </div>
 
         <!-- Sidebar Menu -->
@@ -47,8 +60,14 @@ use yii\helpers\Html;
 
                     ['label' => 'Zona Artigos', 'header' => true],
                     ['label' => 'Artigos', 'icon' => 'fas fa-boxes', 'url' => ['artigos/index'], 'visible' => Yii::$app->user->can('admin') || Yii::$app->user->can('funcionario')],
-                    ['label' => 'Categorias', 'icon' => 'fas fa-plus', 'url' => ['categoria/index'], 'visible' => Yii::$app->user->can('admin')],
-                    ['label' => 'Iva', 'icon' => 'fas fa-plus', 'url' => ['iva/index'], 'visible' => Yii::$app->user->can('admin')],
+[
+    'label' => 'Categorias',
+    'icon' => 'fas fa-plus',
+    'url' => ['categoria/index'],
+    'visible' => Yii::$app->user->can('admin'),
+    'id' => 'Categorias'
+]
+                    ,           ['label' => 'Iva', 'icon' => 'fas fa-plus', 'url' => ['iva/index'], 'visible' => Yii::$app->user->can('admin')],
 
                     ['label' => 'Zona Fornecedor', 'header' => true, 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
                     ['label' => 'Fornecedores', 'icon' => 'user', 'url' => ['fornecedor/index'], 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
@@ -62,6 +81,7 @@ use yii\helpers\Html;
 
                     ['label' => 'Faturação', 'header' => true, 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
                     ['label' => 'Faturas', 'icon' => 'user', 'url' => ['fatura/index'], 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
+                    ['label' => 'Metodo Pagamento', 'icon' => 'user', 'url' => ['metodo-pagamento/index'], 'visible' => Yii::$app->user->can('funcionario') || Yii::$app->user->can('admin')],
 
                     // Botão de logout
                     ['label' => 'Logout', 'url' => ['site/logout'], 'icon' => 'sign-out-alt', 'template' => '<a href="{url}" data-method="post">{icon} {label}</a>'],

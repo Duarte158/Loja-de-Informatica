@@ -6,6 +6,7 @@ use common\models\Profile;
 use Yii;
 use yii\base\Model;
 use common\models\User;
+use yii\helpers\ArrayHelper;
 
 /**
  * Signup form
@@ -22,6 +23,8 @@ class SignUpForm extends Model
     public $nif;
     public $cidade;
     public $codPostal;
+    public $role; // Novo campo para role
+
 
     /**
      * {@inheritdoc}
@@ -49,8 +52,28 @@ class SignUpForm extends Model
             ['contacto', 'required'],
             ['cidade', 'required'],
             ['codPostal', 'required'],
+
+            [['role'], 'in', 'range' => ['admin', 'funcionario']], // Validação para a role ser válida
+
         ];
     }
+
+
+    public function attributeLabels()
+    {
+        return [
+            'role' => 'Role', // Label do campo de role
+        ];
+    }
+
+    // Método que vai buscar as roles disponíveis
+    public function getRoleList()
+    {
+        $auth = Yii::$app->authManager;
+        $roles = $auth->getRoles();
+        return ArrayHelper::map($roles, 'name', 'description'); // Aqui, pegamos as roles e as descrevemos
+    }
+
 
     /**
      * Signs user up.
@@ -66,6 +89,8 @@ class SignUpForm extends Model
             $user->email = $this->email;
             $user->setPassword($this->password);
             $user->generateAuthKey();
+            $user->status = 10; // Definindo o status como 10
+
             $user->save(false);
 
             // Criar e salvar o perfil
@@ -79,11 +104,11 @@ class SignUpForm extends Model
             $profile->codPostal = $this->codPostal;
             $profile->save(false);
 
-            // Atribuir a role "funcionario" ao usuário criado
-            $auth = \Yii::$app->authManager; // Obter o gerenciador de autenticação (AuthManager)
-            $funcionarioRole = $auth->getRole('admin'); // Obter a role "funcionario"
-            if ($funcionarioRole) {
-                $auth->assign($funcionarioRole, $user->id); // Atribuir a role ao usuário criado
+
+            $auth = \Yii::$app->authManager;
+            $role = $auth->getRole($this->role); // Usando a role selecionada
+            if ($role) {
+                $auth->assign($role, $user->id); // Atribuir a role ao usuário
             }
 
             return $user;

@@ -3,9 +3,11 @@
 namespace backend\controllers;
 
 use backend\controllers\SiteController;
+use backend\models\SignUpForm;
 use backend\models\UserSearch;
 use common\models\Profile;
 use common\models\User;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -84,7 +86,18 @@ class UserController extends SiteController
      * @return string|\yii\web\Response
      */
 
+    public function actionCreate()
+    {
+        $model = new \backend\models\SignupForm();
+        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
+            Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
+            return $this->goHome();
+        }
 
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
+    }
 
 
     /**
@@ -94,37 +107,61 @@ class UserController extends SiteController
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
+
+
+
+
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id); // Carrega o modelo User
-        $profile = $model->profile ?? new Profile(); // Carrega ou cria o Profile
+        // Carregar o modelo do usuário
+        $user = User::findOne($id);
+        // Carregar o perfil associado ao usuário
+        $profile = Profile::findOne(['user_id' => $user->id]);
 
-        if ($model->load(\Yii::$app->request->post()) && $profile->load(\Yii::$app->request->post())) {
-            $isValid = $model->validate() && $profile->validate(); // Valida ambos os modelos
-            if ($isValid) {
-                // Salva o User
-                $model->save(false);
+        // Verificar se os modelos existem
+        if (!$user || !$profile) {
+            throw new NotFoundHttpException("Usuário ou perfil não encontrado.");
+        }
 
-                // Relaciona o Profile com o User
-                $profile->user_id = $model->id;
+        // Se for uma requisição POST
+        if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
+            // Verificar se a senha foi alterada
+            if (!empty($user->new_password)) {
+                // Validar que as senhas coincidem
+                if ($user->new_password === $user->confirm_password) {
+                    // Atualizar a senha
+                    $user->setPassword($user->new_password);
+                } else {
+                    // Adicionar erro se as senhas não coincidirem
+                    $user->addError('new_password', 'As senhas não coincidem.');
+                    return $this->render('update', [
+                        'user' => $user,
+                        'profile' => $profile,
+                    ]);
+                }
+            }
 
-                // Atualiza o campo nome no Profile com o username do User
-                $profile->nome = $model->username;
+            // Tente salvar os dois modelos
+            $isUserSaved = $user->save();  // Salvar os dados do usuário
+            $isProfileSaved = $profile->save();  // Salvar os dados do perfil
 
-                // Salva o Profile
-                $profile->save(false);
-
-                return $this->redirect(['view', 'id' => $model->id]);
+            // Verificar se os dois modelos foram salvos com sucesso
+            if ($isUserSaved && $isProfileSaved) {
+                Yii::$app->session->setFlash('success', 'Usuário e perfil atualizados com sucesso!');
+                return $this->redirect(['view', 'id' => $user->id]);  // Redireciona para a página de visualização do usuário
             }
         }
 
+        // Se a requisição não for POST ou não salvar corretamente, renderize o formulário de update
         return $this->render('update', [
-            'model' => $model,
+            'user' => $user,
             'profile' => $profile,
         ]);
     }
 
-    /**
+
+
+/**
      * Deletes an existing User model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id

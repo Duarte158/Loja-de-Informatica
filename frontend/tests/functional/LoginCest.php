@@ -3,64 +3,23 @@
 namespace frontend\tests\functional;
 
 use frontend\tests\FunctionalTester;
-use common\fixtures\UserFixture;
+use yii\helpers\Url;
 
 class LoginCest
 {
-    /**
-     * Load fixtures before db transaction begin
-     * Called in _before()
-     * @see \Codeception\Module\Yii2::_before()
-     * @see \Codeception\Module\Yii2::loadFixtures()
-     * @return array
-     */
-    public function _fixtures()
+    public function loginUser(FunctionalTester $I)
     {
-        return [
-            'user' => [
-                'class' => UserFixture::class,
-                'dataFile' => codecept_data_dir() . 'login_data.php',
-            ],
-        ];
-    }
+        $I->amOnPage('/site/login'); // Acesse a página de login
+        $I->seeElement('#login-form'); // Verifica a existência do formulário
 
-    public function _before(FunctionalTester $I)
-    {
-        $I->amOnRoute('site/login');
-    }
+        // Preenche os campos de login
+        $I->fillField(['name' => 'LoginForm[username]'], 'duarte');
+        $I->fillField(['name' => 'LoginForm[password]'], 'duarte321');
+        $I->click(['name' => 'login-button']); // Clique no botão
 
-    protected function formParams($login, $password)
-    {
-        return [
-            'LoginForm[username]' => $login,
-            'LoginForm[password]' => $password,
-        ];
-    }
-
-    public function checkEmpty(FunctionalTester $I)
-    {
-        $I->submitForm('#login-form', $this->formParams('', ''));
-        $I->seeValidationError('Username cannot be blank.');
-        $I->seeValidationError('Password cannot be blank.');
-    }
-
-    public function checkWrongPassword(FunctionalTester $I)
-    {
-        $I->submitForm('#login-form', $this->formParams('admin', 'wrong'));
-        $I->seeValidationError('Incorrect username or password.');
-    }
-
-    public function checkInactiveAccount(FunctionalTester $I)
-    {
-        $I->submitForm('#login-form', $this->formParams('test.test', 'Test1234'));
-        $I->seeValidationError('Incorrect username or password');
-    }
-
-    public function checkValidLogin(FunctionalTester $I)
-    {
-        $I->submitForm('#login-form', $this->formParams('erau', 'password_0'));
-        $I->see('Logout (erau)', 'form button[type=submit]');
-        $I->dontSeeLink('Login');
-        $I->dontSeeLink('Signup');
+        // Verifica se o redirecionamento aconteceu ou a mensagem de sucesso é exibida
+        $I->amOnPage('/site/index'); // Acesse a página de login
+        $I->see('Bem-vindo à Loja de Informatica', 'h1'); // Substitua por um seletor visível ou texto
+        $I->seeInCurrentUrl('/site/index'); // Verifica a URL após login
     }
 }

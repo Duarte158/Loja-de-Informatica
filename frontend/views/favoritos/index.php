@@ -40,7 +40,7 @@ $this->registerCssFile('@web/css/wishlist.css');
 
                         <?php foreach ($wishlists as $wishlist): ?>
                             <?php
-                            $imagemSrc = 'http://localhost/jcfTaicar/frontend/web/imagens/materiais/' . $wishlist->artigo->imagem;
+                            $imagemSrc = 'http://localhost/Loja-de-Informatica/frontend/web/imagens/materiais/' . $wishlist->artigo->imagem;
                             ?>
                             <tr>
                                 <td width="20%">
@@ -59,7 +59,7 @@ $this->registerCssFile('@web/css/wishlist.css');
                                 <td width="15%" class="price"><?= Html::encode(number_format($wishlist->artigo->precoFinal, 2)) ?>€</td>
                                 <td width="15%">
                                     <?php $form = ActiveForm::begin([
-                                        'action' => ['artigo/adicionar-carrinho'],
+                                        'action' => ['artigos/adicionar-carrinho'],
                                         'method' => 'post',
                                     ]); ?>
                                     <div class="input-group">
@@ -79,7 +79,8 @@ $this->registerCssFile('@web/css/wishlist.css');
                                             'method' => 'post', // Garante que será enviado como POST
                                         ],
                                     ]) ?>
-                                </td>                            </tr>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
                         </tbody>
                     </table>
@@ -88,6 +89,7 @@ $this->registerCssFile('@web/css/wishlist.css');
         </div>
     </div>
 </div>
+
 
 
 

@@ -2,6 +2,8 @@
 
 namespace backend\controllers;
 
+use common\models\Profile;
+use common\models\User;
 use Yii;
 use common\models\Funcionario;
 use yii\data\ActiveDataProvider;
@@ -64,25 +66,40 @@ class FuncionarioController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Funcionario();
+        $model = new Funcionario();  // Usando o modelo User para criar o usuário
+        $profile = new Profile();  // Modelo Profile
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            // Carrega os dados do formulário para o modelo de usuário e de perfil
+            if ($model->load($this->request->post()) && $profile->load($this->request->post())) {
+                // Salva o usuário
+                $model->status = 10; // Definindo o status como ativo
+                $model->save();
+
+                // Salva o perfil (ligação entre o perfil e o usuário)
+                $profile->user_id = $model->id;
+                $profile->save();
+
+                // Agora vamos atribuir a role 'funcionario' ao usuário recém-criado
                 $auth = Yii::$app->authManager;
                 $role = $auth->getRole('funcionario');
-                $auth->assign($role, $model->id);
+                $auth->assign($role, $model->id);  // Atribuindo a role 'funcionario'
 
+                // Redireciona para a visualização do usuário
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
+            // Carrega os valores padrão
             $model->loadDefaultValues();
+            $profile->loadDefaultValues();
         }
 
+        // Renderiza o formulário de criação
         return $this->render('create', [
             'model' => $model,
+            'profile' => $profile,
         ]);
     }
-
 
 
 

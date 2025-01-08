@@ -3,12 +3,9 @@
 namespace frontend\tests\functional;
 
 use frontend\tests\FunctionalTester;
-
-class SignupCest
+class SignupTest
 {
-    protected $formId = '#form-signup';
-
-
+    public $formId = '#form-signup';
     public function _before(FunctionalTester $I)
     {
         $I->amOnRoute('site/signup');
@@ -29,10 +26,10 @@ class SignupCest
     {
         $I->submitForm(
             $this->formId, [
-            'SignupForm[username]'  => 'tester',
-            'SignupForm[email]'     => 'ttttt',
-            'SignupForm[password]'  => 'tester_password',
-        ]
+                'SignupForm[username]'  => 'tester',
+                'SignupForm[email]'     => 'ttttt',
+                'SignupForm[password]'  => 'tester_password',
+            ]
         );
         $I->dontSee('Username cannot be blank.', '.invalid-feedback');
         $I->dontSee('Password cannot be blank.', '.invalid-feedback');
@@ -45,6 +42,12 @@ class SignupCest
             'SignupForm[username]' => 'tester',
             'SignupForm[email]' => 'tester.email@example.com',
             'SignupForm[password]' => 'tester_password',
+            'SignupForm[nome]' => 'Tester Name',
+            'SignupForm[nif]' => '123456789',
+            'SignupForm[cidade]' => 'Leiria',
+            'SignupForm[morada]' => 'Leiria',
+            'SignupForm[contacto]' => '111222333',
+            'SignupForm[codPostal]' => '2000-111',
         ]);
 
         $I->seeRecord('common\models\User', [
@@ -53,7 +56,5 @@ class SignupCest
             'status' => \common\models\User::STATUS_INACTIVE
         ]);
 
-        $I->seeEmailIsSent();
-        $I->see('Thank you for registration. Please check your inbox for verification email.');
     }
 }

@@ -65,8 +65,18 @@ class FaturaController extends Controller
      */
     public function actionView($id)
     {
+        $fatura = Fatura::findOne($id);
+
+        $linhasCarrinho = \common\models\LinhaCarrinho::find()
+            ->where(['carrinho_id' => $fatura->carrinho_id])
+            ->all();
+
+
+
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $fatura,
+            'linhasCarrinho' => $linhasCarrinho,
         ]);
     }
 

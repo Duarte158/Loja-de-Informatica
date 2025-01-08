@@ -17,7 +17,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Funcionario', ['site/signup'], ['class' => 'btn btn-success']) ?>
     </p>
 
 
@@ -36,12 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'created_at',
             //'updated_at',
             //'verification_token',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Funcionario $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
-            ],
+
         ],
     ]); ?>
 

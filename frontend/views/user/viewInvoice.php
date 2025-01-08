@@ -24,10 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <div class="row">
                             <div class="col-12">
-                                <h4>
-                                    <i class="fas fa-globe"></i> AdminLTE, Inc.
-                                    <small class="float-right">Date: 2/10/2014</small>
-                                </h4>
+
                             </div>
 
                         </div>

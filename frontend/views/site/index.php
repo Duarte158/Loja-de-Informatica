@@ -50,19 +50,11 @@ $this->title = 'Página Inicial';
                         <?php
                         $imagemSrc = 'http://localhost/Loja-de-Informatica/frontend/web/imagens/materiais/banner.jpeg';
                         ?>
-                        <img src="<?= $imagemSrc ?>" alt="Banner" style="max-width: 1000%; height: auto; border-radius: 8px;" />
+                        <img src="<?= $imagemSrc ?>" alt="Banner" style="max-width: 100%; height: auto; width: 800px; border-radius: 8px;" />
                     </div>
                 </div>
             </main>
-            <aside class="col-lg-3">
-                <div class="card-banner h-100 rounded-5" style="background-color: #f87217;">
-                    <div class="card-body text-center pb-5">
-                        <h5 class="pt-5 text-white">Configurador</h5>
-                        <p class="text-white">Aproveita e vem montar o teu pc conosco...</p>
-                        <a href="#" class="btn btn-outline-light"> Ver Mais </a>
-                    </div>
-                </div>
-            </aside>
+
         </div>
         <!-- row //end -->
     </div>

@@ -59,12 +59,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                // Regras para a API
-                ['class' => 'yii\rest\UrlRule', 'controller' => ['api/artigos', 'api/user'], 'pluralize' => false],
-                'compras/<id:\d+>/validar-artigo' => 'compras/validar-artigo',
-                'compras/<id:\d+>/search-artigo' => 'compras/search-artigo',
-                // Regra geral para rotas do backend
-                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+
             ],
         ],
 

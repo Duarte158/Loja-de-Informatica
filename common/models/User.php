@@ -28,6 +28,13 @@ use yii\web\IdentityInterface;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
+
+
+    public $new_password;  // Campo para a nova senha
+    public $confirm_password;  // Campo para confirmação de senha
+
+    const SCENARIO_UPDATE = 'update';
+
     const STATUS_DELETED = 0;
     const STATUS_INACTIVE = 9;
     const STATUS_ACTIVE = 10;
@@ -71,11 +78,23 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
+            [['new_password', 'confirm_password'], 'string', 'min' => 6],
+            ['confirm_password', 'compare', 'compareAttribute' => 'new_password', 'message' => 'As senhas não coincidem.'],
+
+
+
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
             ['password', 'string', 'min' => 6], // Adicionando validação para a senha
             ['role', 'string'], // Validação da role
         ];
+    }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_UPDATE] = ['username', 'email', 'status', 'new_password', 'confirm_password'];
+        return $scenarios;
     }
 
     /**
