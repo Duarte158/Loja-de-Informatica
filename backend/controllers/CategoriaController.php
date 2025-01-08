@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use common\models\categoria;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -81,6 +82,7 @@ class CategoriaController extends SiteController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
+                Yii::$app->session->setFlash('success', 'Categoria criada com sucesso.');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
