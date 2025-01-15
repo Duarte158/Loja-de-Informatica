@@ -2,76 +2,60 @@
 
 namespace backend\modules\api\controllers;
 
-use Yii;
-use yii\rest\ActiveController;
-use yii\web\Response;
+use backend\modules\api\components\CustomAuth;
+use common\models\Profile;
 use common\models\User;
+use Yii;
+use yii\filters\auth\QueryParamAuth;
+use yii\helpers\Json;
+use yii\rest\ActiveController;
+use yii\web\Application;
 
 /**
- * UserController para o módulo API
+ * Default controller for the `api` module
  */
 class UserController extends ActiveController
 {
+    public $user=null;
     public $modelClass = 'common\models\User';
-
     /**
-     * Definição de comportamentos (ex.: CORS e formato de resposta).
+     * Renders the index view for the module
+     * @return array|array[]|string
      */
+
     public function behaviors()
     {
         $behaviors = parent::behaviors();
-
-        // Formato JSON por padrão
-        $behaviors['contentNegotiator']['formats']['application/json'] = Response::FORMAT_JSON;
-
+        $behaviors['authenticator'] = [
+            'class' => CustomAuth::className(),
+        ];
         return $behaviors;
     }
 
-    /**
-     * Ação de login.
-     */
+
     public function actionLogin()
     {
-        $request = Yii::$app->request;
-        $data = $request->post(); // Captura os dados enviados via POST.
-
-        // Validação dos dados enviados.
-        if (empty($data['username']) || empty($data['password'])) {
-            return [
-                'success' => false,
-                'message' => 'Por favor, preencha username e password.'
-            ];
+    $user = Yii::$app->user->identity;
+        $role = Yii::$app->authManager->getRole($user);
+        if ($role == null){
+            $role = "cliente";
         }
-
-        $username = $data['username'];
-        $password = $data['password'];
-
-        // Procurar o usuário pelo username.
-        $user = User::find()->where(['username' => $username])->one();
-
-        if (!$user || !Yii::$app->security->validatePassword($password, $user->password_hash)) {
-            return [
-                'success' => false,
-                'message' => 'Username ou senha inválidos.'
-            ];
+        else{
+            $role = $role->name;
         }
-
-        // Gerar um token simples (opcional: substitua por JWT para maior segurança).
-        $token = Yii::$app->security->generateRandomString();
-
-        // Salvar o token no banco (se necessário).
-        $user->auth_key = $token;
-        $user->save();
-
-        return [
-            'success' => true,
-            'message' => 'Login bem-sucedido.',
-            'token' => $token,
-            'user' => [
-                'id' => $user->id,
-                'username' => $user->username,
+        if ($user!=null) {
+            return [
+                'success' => true,
+                'token' => $user->auth_key,
                 'email' => $user->email,
-            ]
-        ];
+                'role' => $role,
+                'message' => 'Login bem-sucedido',
+            ];
+        } else {
+            return [
+                'success' => false,
+                'message' => 'Falha na autenticação',
+            ];
+        }
     }
 }
