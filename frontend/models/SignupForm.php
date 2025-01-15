@@ -69,6 +69,7 @@ public function signup()
         $user->email = $this->email;
         $user->setPassword($this->password);
         $user->generateAuthKey();
+        $user->status = 10;
         $user->save(false);
 
         $profile = new Profile();

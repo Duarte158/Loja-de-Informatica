@@ -78,8 +78,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <div class="col">
                             <!-- Simple link -->
-                            <a href="#!">Forgot password?</a>
+                            <a href="<?= Yii::$app->urlManager->createUrl(['/site/signup']) ?>" class="text-body">Sign Up</a>
                         </div>
+
+
                     </div>
 
                     <!-- Submit button -->

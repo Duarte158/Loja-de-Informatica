@@ -2,18 +2,18 @@
 
 <h2>Admin</h2>
 
-<p>Utilizador: admin</p>
+<p>Utilizador: daurte</p>
 
-<p>Senha: admin</p>
+<p>Senha: duarte321</p>
 
 <h2>Funcionario</h2>
 
 <p>Utilizador: funcionario</p>
 
-<p>Senha: funcionario</p>
+<p>Senha: funcionario321</p>
 
 <h2>Cliente</h2>
 
 <p>Utilizador: cliente</p>
 
-<p>Senha: cliente</p>
+<p>Senha: cliente321</p> 
