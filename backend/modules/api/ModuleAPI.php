@@ -2,6 +2,8 @@
 
 namespace backend\modules\api;
 
+use Yii;
+
 /**
  * api module definition class
  */
@@ -18,7 +20,6 @@ class ModuleAPI extends \yii\base\Module
     public function init()
     {
         parent::init();
-
-        // custom initialization code goes here
+        yii::$app->user->enableSession = false;
     }
 }

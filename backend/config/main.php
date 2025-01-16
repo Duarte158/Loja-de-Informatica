@@ -73,6 +73,9 @@ return [
                 ],
                     'pluralize' => false,
                     'extraPatterns' => [
+
+
+
                         //user
                         'GET login' => 'login',
                         'PUT dados'=>'puteditardados',

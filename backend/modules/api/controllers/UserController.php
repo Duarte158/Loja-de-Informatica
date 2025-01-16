@@ -10,6 +10,9 @@ use yii\filters\auth\QueryParamAuth;
 use yii\helpers\Json;
 use yii\rest\ActiveController;
 use yii\web\Application;
+use yii\web\BadRequestHttpException;
+use yii\web\Response;
+use yii\web\UnauthorizedHttpException;
 
 /**
  * Default controller for the `api` module
@@ -23,39 +26,41 @@ class UserController extends ActiveController
      * @return array|array[]|string
      */
 
-    public function behaviors()
-    {
-        $behaviors = parent::behaviors();
-        $behaviors['authenticator'] = [
-            'class' => CustomAuth::className(),
-        ];
-        return $behaviors;
-    }
+
+
 
 
     public function actionLogin()
     {
-    $user = Yii::$app->user->identity;
-        $role = Yii::$app->authManager->getRole($user);
-        if ($role == null){
-            $role = "cliente";
+        // Obtém os dados do corpo da requisição (POST)
+        $params = Yii::$app->request->post();
+        $username = $params['username'] ?? null;
+        $password = $params['password'] ?? null;
+
+        // Verifica se o nome de usuário e a senha foram fornecidos
+        if ($username === null || $password === null) {
+            throw new BadRequestHttpException('Parâmetros ausentes');
         }
-        else{
-            $role = $role->name;
+
+        // Encontra o usuário pelo nome de usuário
+        $user = User::findByUsername($username);
+
+        // Verifica se o usuário existe e a senha está correta
+        if ($user === null || !$user->validatePassword($password)) {
+            throw new UnauthorizedHttpException('Credenciais inválidas');
         }
-        if ($user!=null) {
-            return [
-                'success' => true,
-                'token' => $user->auth_key,
-                'email' => $user->email,
-                'role' => $role,
-                'message' => 'Login bem-sucedido',
-            ];
-        } else {
-            return [
-                'success' => false,
-                'message' => 'Falha na autenticação',
-            ];
-        }
+
+        // Gere um token de autenticação (exemplo: auth_key)
+        $user->generateAuthKey(); // Supondo que você tenha esse método no seu modelo User
+        $user->save();
+
+        // Retorna os dados do usuário e o token
+        return [
+            'success' => true,
+            'token' => $user->auth_key,
+            'email' => $user->email,
+            'message' => 'Login bem-sucedido',
+        ];
     }
+
 }

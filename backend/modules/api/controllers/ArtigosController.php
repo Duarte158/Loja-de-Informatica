@@ -1,6 +1,7 @@
 <?php
 namespace backend\modules\api\controllers;
 
+use backend\modules\api\components\CustomAuth;
 use Yii;
 use yii\filters\auth\QueryParamAuth;
 use yii\rest\ActiveController;
@@ -16,6 +17,14 @@ class ArtigosController extends ActiveController
 
 
 
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+        $behaviors['authenticator'] = [
+            'class' => CustomAuth::className(),
+        ];
+        return $behaviors;
+    }
 
 
 
