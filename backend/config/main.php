@@ -65,9 +65,10 @@ return [
                 [
                     'class' => 'yii\rest\UrlRule','controller' => [
                     'api/user',
+                    'api/fatura',
                     'api/artigos',
                     'api/iva',
-                    'api/categoria',
+                    'api/categorias',
                     'api/carrinho',
                     'api/matematica',
                 ],
@@ -93,8 +94,8 @@ return [
                         'PUT editarartigo/{id}' => 'putartigo',
 
                         //categoria
-                        'POST adicionarcategoria' => 'postcategoria',
-                        'PUT editarcategoria/{id}'=>'putdescricaoporid',
+                        'POST postcategoria' => 'postcategoria',
+                        'PUT editarcategoria/{id}'=>'putcategoria',
                         'DELETE eliminarcategoria/{id}'=>'deletecategoria',
 
                         //iva
@@ -103,7 +104,7 @@ return [
                         'DELETE eliminariva/{id}'=>'deleteiva',
 
                         //carrinho
-                        'GET carrinho/{id}'=>'getcarrinhoporid',
+                        'GET carrinhoativo'=>'carrinhoativo',
                         'POST adicionarcarrinho' =>'postcarrinho',
                         'DELETE eliminarcarrinho/{id}' =>'deletecarrinho',
                         'PUT finalizar/{id}' =>'putfinalizarcarrinho',
@@ -114,9 +115,15 @@ return [
                         'DELETE eliminarlinha/{id}'=>'deletelinha',
                         'PUT linha/{id}'=>'putquantidadeporlinha',
 
+
+
+
                         //fatura
-                        'POST fatura/{id}' => 'postfaturaporcarrinho',
-                        'PUT anularfatura/{id}' => 'putanularfatura',
+                        'GET {id}/view' => 'view',
+
+                        'GET {user_id}/user' => 'faturas-usuario',
+                        'POST faturas/{id}' => 'postfaturaporcarrinho',
+                        'PUT anularfaturas/{id}' => 'putanularfatura',
 
 
 
@@ -125,6 +132,9 @@ return [
                     'tokens' => [
                         '{id}' => '<id:\\d+>',
                         '{referencia}' => '<referencia:\\w+>', //[a-zA-Z0-9_] 1 ou + vezes (char)
+                        '{user_id}' => '<user_id:\\d+>',
+
+
                     ],
                 ],
             ],

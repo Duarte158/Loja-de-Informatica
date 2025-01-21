@@ -17,14 +17,7 @@ class ArtigosController extends ActiveController
 
 
 
-    public function behaviors()
-    {
-        $behaviors = parent::behaviors();
-        $behaviors['authenticator'] = [
-            'class' => CustomAuth::className(),
-        ];
-        return $behaviors;
-    }
+
 
 
 
@@ -59,7 +52,7 @@ class ArtigosController extends ActiveController
         $rawBody = Yii::$app->request->getRawBody();
         $decodedBody = Json::decode($rawBody);
 
-        $artigo = $this->modelClass::findOne(['id' => $id]);
+        $artigo = $this->modelClass::findOne(['Id' => $id]);
 
         if ($artigo) {
             $artigo->load($decodedBody, '');
