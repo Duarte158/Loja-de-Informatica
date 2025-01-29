@@ -25,7 +25,6 @@ $this->title = $categoria->descricao;
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <!-- Sidebar para filtragem por marca -->
                 <div class="col-md-3">
                     <div class="card">
                         <div class="card-header">

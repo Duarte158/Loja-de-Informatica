@@ -1,0 +1,28 @@
+
+    /* Estilo geral do cartão */
+.product-item {
+
+    min-height: 350px; /* Altura mínima para uniformidade */
+}
+
+/* Estilo para a imagem */
+.product-item img {
+    width: 100%;
+    height: 200px; /* Altura fixa para as imagens */
+    object-fit: cover; /* Ajusta o conteúdo sem distorcer */
+    margin-bottom: 10px;
+}
+
+/* Espaçamento para o conteúdo principal */
+.product-item .text-center {
+    flex-grow: 1; /* O conteúdo cresce para preencher o espaço restante */
+}
+
+/* Garantir que o botão não fique escondido */
+.button-area {
+    margin-top: auto; /* Empurra o botão para o final do cartão */
+}
+
+
+
+

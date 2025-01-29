@@ -40,7 +40,7 @@ $this->registerCssFile('@web/css/wishlist.css');
 
                         <?php foreach ($wishlists as $wishlist): ?>
                             <?php
-                            $imagemSrc = 'http://localhost/Loja-de-Informatica/frontend/web/imagens/materiais/' . $wishlist->artigo->imagem;
+                            $imagemSrc = Yii::getAlias('@web') . '/imagens/materiais/' . $wishlist->artigo->imagem;
                             ?>
                             <tr>
                                 <td width="20%">

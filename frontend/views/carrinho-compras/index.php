@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $csrfParam = Yii::$app->request->csrfParam;
 
 $csrfToken = Yii::$app->request->csrfToken;
+$this->registerJsFile('@web/js/calcularDistancia.js');
 
 ?>
 <header>
@@ -37,7 +38,8 @@ $csrfToken = Yii::$app->request->csrfToken;
                         <?php foreach ($linhasCarrinho as $linhaCarrinho): ?>
                             <div class="row mb-4">
                                 <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                                    <?php $imagemSrc = 'http://localhost/Loja-de-Informatica/frontend/web/imagens/materiais/' . $linhaCarrinho->artigo->imagem;
+                                    <?php                         $imagemSrc = Yii::getAlias('@web') . '/imagens/materiais/' . $linhaCarrinho->artigo->imagem;
+
                                     ?>
                                     <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
                                         <img src="<?= $imagemSrc ?>" class="w-100" alt="<?= $linhaCarrinho->artigo->nome ?>"/>
@@ -105,9 +107,7 @@ $csrfToken = Yii::$app->request->csrfToken;
                             <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                                 IVA <span class="valorIva"><?= number_format($model->valorIva, 2) ?>€</span>
                             </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                Frete <span>Gratis</span>
-                            </li>
+
                             <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                                 <div>
                                     <strong>Total</strong>
@@ -115,11 +115,15 @@ $csrfToken = Yii::$app->request->csrfToken;
                                 </div>
                                 <span class="valorTotal"><?= number_format($model->valorTotal, 2) ?>€</span>
                             </li>
+
+                            <!-- Campo de entrada para a morada -->
+
                         </ul>
-                        <?= Html::a('Pagamento', ['carrinho-compras/checkout'], ['class' => 'btn btn-warning small-btn']) ?>
+                        <?= Html::a('Checkout', ['carrinho-compras/checkout'], ['class' => 'btn btn-warning small-btn']) ?>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </section>
