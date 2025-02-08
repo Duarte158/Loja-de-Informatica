@@ -72,18 +72,16 @@ class SiteController extends Controller
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
-            // Se o usuário já está logado, redirecione para a página inicial
             return $this->redirect(['site/index']);
         }
 
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            // Após login bem-sucedido, redirecione para a página inicial
             return $this->redirect(['site/index']);
         }
 
-        $model->password = ''; // Limpa a senha no formulário por segurança
+        $model->password = '';
 
         return $this->render('login', [
             'model' => $model,
