@@ -84,7 +84,7 @@ class CarrinhoComprasController extends Controller
 
 
 
-
+/*
 
     function geocodeEndereco($endereco)
     {
@@ -104,8 +104,8 @@ class CarrinhoComprasController extends Controller
         return null; // Retorna null se não conseguir geocodificar o endereço
     }
 
-
-    private function calcularDistancia($lat_empresa, $lon_empresa, $moradaCliente)
+*/
+   /* private function calcularDistancia($lat_empresa, $lon_empresa, $moradaCliente)
     {
         $coordenadas = $this->geocodeEndereco($moradaCliente);
 
@@ -125,194 +125,203 @@ class CarrinhoComprasController extends Controller
         }
 
         return 0;
-    }
+    }*/
 
 
     public function actionCheckout()
     {
-        // Verifica se o usuário está logado
         if (Yii::$app->user->isGuest) {
             return $this->redirect(['site/login']);
         }
 
-        $carrinho = CarrinhoCompras::find()
-            ->where(['user_id' => Yii::$app->user->id, 'estado' => 'ativo'])
-            ->one();
+        $metodosEnvio = \common\models\Metodoenvio::find()->all();
+        $carrinho = CarrinhoCompras::findOne(['user_id' => Yii::$app->user->id, 'estado' => 'ativo']);
 
-        if ($carrinho === null) {
+        if (!$carrinho) {
             Yii::$app->session->setFlash('info', 'Seu carrinho está vazio.');
             return $this->redirect(['site/index']);
         }
-        $metodo = Metodopagamento::find()->all();
 
-
-        $linhasCarrinho = \common\models\Linhacarrinho::find()
-            ->where(['carrinho_id' => $carrinho->id])
-            ->all();
-
-
+        $linhasCarrinho = \common\models\Linhacarrinho::findAll(['carrinho_id' => $carrinho->id]);
         $user = Yii::$app->user->identity;
-        $moradaCliente = $user->profile->morada; // Pode ser outra forma de pegar a morada
 
-        $lat_empresa = '40.730610'; // Latitude da empresa
-        $lon_empresa = '-73.935242'; // Longitude da empresa
+        if (Yii::$app->request->isPost) {
+            $dadosCheckout = Yii::$app->request->post();
 
-        $distancia = $this->calcularDistancia($lat_empresa, $lon_empresa, $moradaCliente);
+            if (isset($dadosCheckout['primeiroNome'], $dadosCheckout['endereco'], $dadosCheckout['envio_id'],   $dadosCheckout['cidade'], $dadosCheckout['cep'])) {
+                Yii::$app->session->set('dadosEntrega', $dadosCheckout);
+                return $this->redirect(['carrinho-compras/pagamento']);
+            } else {
+                Yii::$app->session->setFlash('error', 'Por favor, preencha todos os campos obrigatórios.');
+            }
 
-        $precoEntrega = $this->calcularPrecoEntrega($distancia);
-
-        // Atualizando o valor total do carrinho com o preço da entrega
-        $carrinho->valorTotal += $precoEntrega;
-        $carrinho->save(); // Salva as alterações no carrinho
+        }
 
         return $this->render('checkout', [
             'linhasCarrinho' => $linhasCarrinho,
             'carrinho' => $carrinho,
             'user' => $user,
-            'distancia' => $distancia,
-            'precoEntrega' => $precoEntrega,
-            'user' => $user,
-            'metodos' => $metodo
+            'metodosEnvio' => $metodosEnvio
+        ]);
+    }
+
+    public function actionAtualizarTotal()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        // Tente obter os dados com getBodyParams()
+        $data = Yii::$app->request->getBodyParams();
+
+        // Se estiver vazio, use file_get_contents
+        if (empty($data)) {
+            $data = json_decode(file_get_contents('php://input'), true);
+        }
+
+        Yii::error($data, __METHOD__); // Registra os dados recebidos para debug
+
+        // Verifica se as chaves existem
+        if (!isset($data['envio_id']) || !isset($data['novo_total'])) {
+            return [
+                'success' => false,
+                'message' => 'Dados incompletos',
+                'data_recebido' => $data
+            ];
+        }
+
+        $envioId = $data['envio_id'];
+        $novoTotal = $data['novo_total'];
+
+        $carrinho = CarrinhoCompras::findOne(['user_id' => Yii::$app->user->id, 'estado' => 'ativo']);
+        if ($carrinho) {
+            $carrinho->envio_id = $envioId;
+            // Atenção: verifique se o atributo do seu modelo é 'valorTotal' ou 'valor_total'
+            $carrinho->valorTotal = $novoTotal;
+            if (!$carrinho->save(false)) {
+                Yii::error($carrinho->getErrors(), __METHOD__);
+                return ['success' => false, 'errors' => $carrinho->getErrors()];
+            }
+        } else {
+            return ['success' => false, 'message' => 'Carrinho não encontrado.'];    }
+        return ['success' => true];}
+
+
+
+
+
+
+    /*    private function calcularPrecoEntrega($distancia)
+        {
+            // Buscar a faixa de distância na base de dados
+            $faixa = PrecoEntrega::find()
+                ->where(['<=', 'distancia_min', $distancia])
+                ->andWhere(['>=', 'distancia_max', $distancia])
+                ->one();
+
+            // Retorna o preço da entrega
+            return $faixa ? $faixa->preco : 0;
+        }*/
+
+
+
+
+
+
+    public function actionPagamento()
+    {
+        $dadosEntrega = Yii::$app->session->get('dadosEntrega');
+        $metodos = Metodopagamento::find()->all();
+
+
+        Yii::$app->session->set('dadosEntrega', [
+            'primeiroNome' => Yii::$app->request->post('primeiroNome'),
+            'cidade' => Yii::$app->request->post('cidade'),
+            'endereco' => Yii::$app->request->post('endereco'),
+            'cep' => Yii::$app->request->post('cep'),
+            'envio_id' => Yii::$app->request->post('envio_id'),
+        ]);
+
+        if (!$dadosEntrega) {
+            Yii::$app->session->setFlash('error', 'Dados de entrega não encontrados. Por favor, preencha o formulário de checkout novamente.');
+            return $this->redirect(['carrinho-compras/checkout']);
+        }
+
+        return $this->render('pagamento', [
+            'dadosEntrega' => $dadosEntrega,
+            'metodos' => $metodos,
         ]);
     }
 
 
-
-    private function calcularPrecoEntrega($distancia)
-    {
-        // Buscar a faixa de distância na base de dados
-        $faixa = PrecoEntrega::find()
-            ->where(['<=', 'distancia_min', $distancia])
-            ->andWhere(['>=', 'distancia_max', $distancia])
-            ->one();
-
-        // Retorna o preço da entrega
-        return $faixa ? $faixa->preco : 0;
-    }
-
-
-
-
-    public function actionPagamento(){
-
-        return $this->render('pagamento');
-
-
-    }
-
-
-
-
-
-
     public function actionFinalizar()
     {
-        $request = Yii::$app->request;
+        $user = Yii::$app->user->identity;
 
-        if ($request->isPost) {
-            $user = Yii::$app->user->identity;
+        if (!$user) {
+            Yii::$app->session->setFlash('error', 'Você precisa estar logado para finalizar a compra.');
+            return $this->redirect(['site/login']);
+        }
 
-            if (!$user) {
-                Yii::$app->session->setFlash('error', 'Você precisa estar logado para finalizar a compra.');
-                return $this->redirect(['site/login']);
-            }
+        $carrinho = CarrinhoCompras::findOne(['user_id' => $user->id, 'estado' => 'ativo']);
 
-            $carrinho = CarrinhoCompras::find()
-                ->where(['user_id' => $user->id, 'estado' => 'ativo'])
-                ->one();
+        if (!$carrinho) {
+            Yii::$app->session->setFlash('error', 'O carrinho está vazio ou não foi encontrado.');
+            return $this->redirect(['carrinho-compras/checkout']);
+        }
 
-            if (!$carrinho) {
-                Yii::$app->session->setFlash('error', 'O carrinho está vazio ou não foi encontrado.');
-                return $this->redirect(['site/checkout']);
-            }
-
-            $metodoPagamentoID = $request->post('metodoPagamento_id');
-            if (!$metodoPagamentoID) {
-                Yii::$app->session->setFlash('error', 'Por favor, selecione um método de pagamento.');
-                return $this->redirect(['site/checkout']);
-            }
-
-            $encomenda = new Entregas();
-
-            // Verificar se o endereço de cobrança é o mesmo que o de envio
-            $mesmoEndereco = $request->post('mesmoEndereco', true); // "true" se a checkbox estiver marcada
-            Yii::$app->session->setFlash('endereço', 'Valor de mesmoEndereco: ' . ($mesmoEndereco ? 'true' : 'false'));
-
-            if ($mesmoEndereco) {
-                // Usar os dados do perfil do usuário
-                $perfil = $user->profile;
-                if (!$perfil) {
-                    Yii::$app->session->setFlash('error', 'Erro ao carregar os dados do perfil do usuário.');
-                    return $this->redirect(['site/checkout']);
-                }
-
-                $encomenda->nome = $perfil->nome;
-                $encomenda->morada = $perfil->morada;
-                $encomenda->cidade = $perfil->cidade;
-                $encomenda->contacto = $perfil->contacto;
-                $encomenda->codPostal = $perfil->codPostal;
-            } else {
-                // Usar os dados do formulário de endereço de envio
-                $encomenda->nome = $request->post('nomeEnvio');
-                $encomenda->morada = $request->post('enderecoEnvio');
-                $encomenda->cidade = $request->post('cidadeEnvio');
-                $encomenda->contacto = $request->post('contactoEnvio');
-                $encomenda->codPostal = $request->post('codpostalEnvio');
-            }
-
-            $fatura = new Fatura();
-            $fatura->data = date('Y-m-d H:i:s'); // Data da fatura
-            $fatura->user_id = $user->id; // Usuário logado
-            $fatura->metodoPagamento_id = $metodoPagamentoID;
-            $fatura->carrinho_id = $carrinho->id; // Relacionar a fatura ao carrinho
+        $metodoPagamentoID = Yii::$app->request->post('metodoPagamento_id');
+        if (!$metodoPagamentoID) {
+            Yii::$app->session->setFlash('error', 'Por favor, selecione um método de pagamento.');
+            return $this->redirect(['carrinho-compras/pagamento']);
+        }
 
 
-            if (!$fatura->save()) {
-                Yii::$app->session->setFlash('error', 'Erro ao criar a fatura. Verifique os dados.');
-                Yii::debug($fatura->errors); // Log dos erros
-                return $this->redirect(['site/checkout']);
-            }
+        $dadosEntrega = Yii::$app->session->get('dadosEntrega');
 
-            // Preencher os outros dados da encomenda
-            $encomenda->estado = 'Por entregar'; // Estado inicial da encomenda
-            $encomenda->data = date('Y-m-d H:i:s'); // Data atual
-            $encomenda->carrinho_id = $carrinho->id; // Relacionar a encomenda ao carrinho
 
-            if ($encomenda->save()) {
-                $carrinho->estado = 'finalizado';
-                if (!$carrinho->save()) {
-                    Yii::$app->session->setFlash('error', 'Erro ao atualizar o estado do carrinho.');
-                    Yii::debug($carrinho->errors); // Log dos erros
-                    return $this->redirect(['site/checkout']);
-                }
+        $encomenda = new Entregas([
+            'nome' => $dadosEntrega['primeiroNome'],
+            'morada' => $dadosEntrega['endereco'],
+            'cidade' => $dadosEntrega['cidade'] ?? '',
+            'codPostal' => $dadosEntrega['cep'],
+            'estado' => 'Por entregar',
+            'data' => date('Y-m-d H:i:s'),
+            'carrinho_id' => $carrinho->id,
+            'user_id' => $user->id,
+            'envio_id' => $dadosEntrega['envio_id']
+        ]);
 
+        $fatura = new Fatura([
+            'data' => date('Y-m-d H:i:s'),
+            'user_id' => $user->id,
+            'metodoPagamento_id' => $metodoPagamentoID,
+            'carrinho_id' => $carrinho->id
+        ]);
+
+        if ($fatura->save() && $encomenda->save()) {
+            $carrinho->estado = 'finalizado';
+
+            if ($carrinho->save()) {
                 foreach ($carrinho->linhacarrinhos as $linha) {
                     $produto = $linha->artigo;
+
                     if ($produto) {
-                        $produto->stock -= $linha->quantidade; // Desconta a quantidade comprada
+                        $produto->stock -= $linha->quantidade;
 
                         if (!$produto->save()) {
-                            // Caso falhe ao salvar o produto (descontar o estoque)
                             Yii::$app->session->setFlash('error', 'Erro ao atualizar o estoque do produto: ' . $produto->nome);
-                            Yii::debug($produto->errors); // Log dos erros
-                            return $this->redirect(['site/checkout']);
+                            return $this->redirect(['carrinho-compras/checkout']);
                         }
                     }
                 }
 
-                // Redireciona para a página de confirmação
+                Yii::$app->session->remove('dadosEntrega');
                 return $this->redirect(['carrinho-compras/confirmacao']);
-            } else {
-                Yii::$app->session->setFlash('error', 'Erro ao salvar a encomenda.');
-                Yii::debug($encomenda->errors); // Log dos erros
             }
         }
 
-        // Caso o método não seja POST ou algo falhe
-        Yii::$app->session->setFlash('error', 'Erro ao processar o pedido. Tente novamente.');
-        return $this->redirect(['site/checkout']);
+        Yii::$app->session->setFlash('error', 'Erro ao finalizar a encomenda.');
+        return $this->redirect(['carrinho-compras/checkout']);
     }
-
 
 
 

@@ -2,22 +2,24 @@
 
 namespace common\models;
 
-use backend\models\Linhacarrinho;
 use Yii;
 
 /**
  * This is the model class for table "carrinhocompras".
  *
  * @property int $id
- * @property string $data
- * @property float $valorTotal
- * @property string $estado
+ * @property string|null $data
+ * @property float|null $valorTotal
+ * @property string|null $estado
  * @property int|null $opcaoEntrega
- * @property float $valorIva
- * @property int $user_id
+ * @property float|null $valorIva
+ * @property int|null $user_id
  * @property string|null $metodoPagamento
+ * @property int|null $envio_id
  *
  * @property Entregas[] $entregas
+ * @property Metodoenvio $envio
+ * @property Fatura[] $faturas
  * @property Linhacarrinho[] $linhacarrinhos
  * @property User $user
  */
@@ -37,11 +39,11 @@ class Carrinhocompras extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['data', 'valorTotal', 'estado', 'valorIva', 'user_id'], 'required'],
-            [['data'], 'safe'],
+            [['data','envio_id', 'valor_total'], 'safe'],
             [['valorTotal', 'valorIva'], 'number'],
-            [['opcaoEntrega', 'user_id'], 'integer'],
+            [['opcaoEntrega', 'user_id', 'envio_id'], 'integer'],
             [['estado', 'metodoPagamento'], 'string', 'max' => 45],
+            [['envio_id'], 'exist', 'skipOnError' => true, 'targetClass' => Metodoenvio::class, 'targetAttribute' => ['envio_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -60,6 +62,7 @@ class Carrinhocompras extends \yii\db\ActiveRecord
             'valorIva' => 'Valor Iva',
             'user_id' => 'User ID',
             'metodoPagamento' => 'Metodo Pagamento',
+            'envio_id' => 'Envio ID',
         ];
     }
 
@@ -74,13 +77,33 @@ class Carrinhocompras extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Envio]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEnvio()
+    {
+        return $this->hasOne(Metodoenvio::class, ['id' => 'envio_id']);
+    }
+
+    /**
+     * Gets query for [[Faturas]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFaturas()
+    {
+        return $this->hasMany(Fatura::class, ['carrinho_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[Linhacarrinhos]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getLinhacarrinhos()
     {
-        return $this->hasMany(\common\models\Linhacarrinho::class, ['carrinho_id' => 'id']);
+        return $this->hasMany(Linhacarrinho::class, ['carrinho_id' => 'id']);
     }
 
     /**
@@ -128,7 +151,6 @@ class Carrinhocompras extends \yii\db\ActiveRecord
             ->where(['carrinho_id' => $this->id])
             ->sum('quantidade');
     }
-
 
 
 

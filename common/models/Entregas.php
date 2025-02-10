@@ -17,8 +17,10 @@ use Yii;
  * @property string|null $codPostal
  * @property int|null $contacto
  * @property int|null $user_id
+ * @property int|null $envio_id
  *
  * @property Carrinhocompras $carrinho
+ * @property Metodoenvio $envio
  * @property User $user
  */
 class Entregas extends \yii\db\ActiveRecord
@@ -39,9 +41,10 @@ class Entregas extends \yii\db\ActiveRecord
         return [
             [['estado', 'carrinho_id'], 'required'],
             [['data'], 'safe'],
-            [['carrinho_id', 'contacto', 'user_id'], 'integer'],
+            [['carrinho_id', 'contacto', 'user_id', 'envio_id'], 'integer'],
             [['estado', 'nome', 'morada', 'cidade', 'codPostal'], 'string', 'max' => 45],
             [['carrinho_id'], 'exist', 'skipOnError' => true, 'targetClass' => Carrinhocompras::class, 'targetAttribute' => ['carrinho_id' => 'id']],
+            [['envio_id'], 'exist', 'skipOnError' => true, 'targetClass' => Metodoenvio::class, 'targetAttribute' => ['envio_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -62,6 +65,7 @@ class Entregas extends \yii\db\ActiveRecord
             'codPostal' => 'Cod Postal',
             'contacto' => 'Contacto',
             'user_id' => 'User ID',
+            'envio_id' => 'Envio ID',
         ];
     }
 
@@ -73,6 +77,16 @@ class Entregas extends \yii\db\ActiveRecord
     public function getCarrinho()
     {
         return $this->hasOne(Carrinhocompras::class, ['id' => 'carrinho_id']);
+    }
+
+    /**
+     * Gets query for [[Envio]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEnvio()
+    {
+        return $this->hasOne(Metodoenvio::class, ['id' => 'envio_id']);
     }
 
     /**

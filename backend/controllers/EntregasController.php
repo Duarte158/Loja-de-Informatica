@@ -4,8 +4,10 @@ namespace backend\controllers;
 
 use app\models\EntregasSearch;
 use common\models\Entregas;
+use common\models\Fatura;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -57,9 +59,64 @@ class EntregasController extends Controller
      */
     public function actionView($id)
     {
+        $entregas = Entregas::findOne($id);
+
+
+        $linhasCarrinho = \common\models\LinhaCarrinho::find()
+            ->where(['carrinho_id' => $entregas->carrinho_id])
+            ->all();
+
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' =>$entregas,
+            'linhasCarrinho' => $linhasCarrinho
         ]);
+    }
+
+
+    /**
+     * Altera o estado de uma entrega.
+     *
+     * Permite somente as seguintes transições:
+     * - de "por entregar" para "em preparação"
+     * - de "em preparação" para "entregue"
+     *
+     * @param integer $id O ID da entrega
+     * @param string $estado O novo estado desejado
+     * @return \yii\web\Response
+     * @throws BadRequestHttpException Se o método não for POST
+     * @throws NotFoundHttpException Se a entrega não for encontrada
+     */
+    public function actionAlterarEstado($id, $estado)
+    {
+        $request = Yii::$app->request;
+        if (!$request->isPost) {
+            throw new BadRequestHttpException('Método inválido.');
+        }
+
+        $model = Entregas::findOne($id);
+        if (!$model) {
+            throw new NotFoundHttpException('Entrega não encontrada.');
+        }
+
+        // Valida a transição permitida
+        if ($model->estado === 'Por entregar' && $estado === 'em preparação') {
+            $model->estado = 'em preparação';
+        } elseif ($model->estado === 'em preparação' && $estado === 'entregue') {
+            $model->estado = 'entregue';
+        } else {
+            Yii::$app->session->setFlash('error', 'Transição de estado inválida.');
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        if ($model->save()) {
+            Yii::$app->session->setFlash('success', 'Estado atualizado com sucesso.');
+        } else {
+            Yii::$app->session->setFlash('error', 'Erro ao atualizar o estado.');
+        }
+
+        // Redireciona para a view da entrega, conforme a URL: /entregas/view?id=45
+        return $this->redirect(['view', 'id' => $model->id]);
     }
 
     /**
