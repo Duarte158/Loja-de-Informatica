@@ -72,12 +72,21 @@ class SiteController extends Controller
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
+            if (Yii::$app->user->can('cliente')) {
+                Yii::$app->user->logout();
+                Yii::$app->session->setFlash('error', 'Acesso negado. Você não tem permissão para acessar o backend.');
+                return $this->redirect(['site/login']);
+            }
             return $this->redirect(['site/index']);
         }
 
-
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            if (Yii::$app->user->can('cliente')) {
+                Yii::$app->user->logout();
+                Yii::$app->session->setFlash('error', 'Acesso negado. Você não tem permissão para acessar o backend.');
+                return $this->redirect(['site/login']);
+            }
             return $this->redirect(['site/index']);
         }
 

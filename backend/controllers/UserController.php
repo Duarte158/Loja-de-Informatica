@@ -26,12 +26,24 @@ class UserController extends SiteController
         return array_merge(
             parent::behaviors(),
             [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    // Restringe somente a ação "update"
+                    'only' => ['update'],
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'actions' => ['update'],
+                            // Permite apenas usuários com a role "admin"
+                            'roles' => ['admin'],
+                        ],
+                        // Bloqueia o acesso para qualquer outro usuário que tente acessar update
+                        [
+                            'allow' => false,
+                        ],
                     ],
                 ],
+                // Outros filtros, se houver
             ]
         );
     }

@@ -25,8 +25,22 @@ class ComprasController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'rules' => [
+                        // Permite o acesso apenas para admin e funcionário
+                        [
+                            'allow' => true,
+                            'roles' => ['admin', 'funcionario'],
+                        ],
+                        // Negação geral para os demais (incluindo clientes e usuários não autenticados)
+                        [
+                            'allow' => false,
+                        ],
+                    ],
+                ],
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => \yii\filters\VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -34,6 +48,7 @@ class ComprasController extends Controller
             ]
         );
     }
+
 
     /**
      * Lists all Compras models.
